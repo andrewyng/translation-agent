@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "translation-agent"
+version = "0.1.0"
+description = "Agentic workflow for machine translation using LLMs"
+authors = ["Your Name <you@example.com>"]
+license = "MIT"
+readme = "README.md"
+package-mode = true
+packages = [{include = "translation_agent", from = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+spacy = "^3.7.4"
+openai = "^1.28.1"
+tiktoken = "^0.6.0"
+joblib = "^1.4.2"
+pysrt = "^1.1.2"
+
+[tool.poetry.group.dev.dependencies]
+black = "^24.4.2"
+flake8 = "^7.0.0"
+pyright = "^1.1.362"
+pre-commit = "^3.7.1"
+python-dotenv = "^1.0.1"
+
+
+[tool.poetry.group.test.dependencies]
+pytest = "^8.2.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
