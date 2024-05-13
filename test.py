@@ -2,7 +2,7 @@
 
 import translation_agent as ta
 
-(source_lang, target_lang) = ("English", "Spanish")
+source_lang, target_lang = "English", "Spanish"
 
 filename = "sample-texts/sample-long1.txt"
 with open(filename, 'r', encoding='utf-8') as file:
