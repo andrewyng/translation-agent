@@ -1,4 +1,4 @@
-#!/usr/bin/env python 
+#!/usr/bin/env python
 
 from nbconvert.exporters.script import ScriptExporter
 from nbconvert.preprocessors import Preprocessor
@@ -31,5 +31,4 @@ script, resources = exporter.from_notebook_node(nb)
 with open("../translation_agent/translation_agent_util.py", "w") as f:
     f.write(script)
 
-print("Done") 
-
+print("Done")

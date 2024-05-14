@@ -4,7 +4,7 @@
 # In[1]:
 
 
-import sys, os, warnings, re, itertools, json, math 
+import sys, os, warnings, re, itertools, json, math
 
 import openai
 
@@ -18,6 +18,9 @@ import spacy
 from dotenv import load_dotenv, find_dotenv
 
 _ = load_dotenv(find_dotenv())  # read local .env file
+
+
+# In[2]:
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 client = openai.OpenAI()
