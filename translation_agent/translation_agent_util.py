@@ -4,27 +4,24 @@
 # In[1]:
 
 
-import sys, os, warnings, re, itertools, json 
+import sys, os, warnings, re, itertools, json, math 
 
-import pysrt
-import spacy
 import openai
 from joblib import Memory
 import tiktoken
 import spacy
-import math 
 
-from dotenv import load_dotenv, find_dotenv
-_ = load_dotenv(find_dotenv()) # read local .env file
+#from dotenv import load_dotenv, find_dotenv
+#_ = load_dotenv(find_dotenv()) # read local .env file
 
-cachedir = './cache_dir'  # Directory to store joblib cache
+#cachedir = './cache_dir'  # Directory to store joblib cache
 memory = Memory(cachedir, verbose=0)
 
 
 # In[2]:
 
 
-openai.api_key  = os.getenv('OPENAI_API_KEY')
+#openai.api_key  = os.getenv('OPENAI_API_KEY')
 client = openai.OpenAI()
 
 @memory.cache
