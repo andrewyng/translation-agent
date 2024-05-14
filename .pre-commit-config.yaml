@@ -1,0 +1,32 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.3.0
+    hooks:
+      # - id: double-quote-string-fixer
+      - id: check-yaml
+      - id: check-toml
+      - id: end-of-file-fixer
+        language: python
+      - id: trailing-whitespace
+        name: Trim trailing Whitespace
+        language: python
+  - repo: local
+    hooks:
+      - id: black
+        name: Black Python code formatting
+        entry: bash -c 'black "$@"; git add -u' --
+        language: python
+        types: [python]
+        args: ["--line-length=120"]
+      - id: flake8
+        entry: bash -c 'flake8 "$@"; git add -u' --
+        name: Flake8 linting
+        language: python
+        types: [python]
+        args: ["--max-line-length=120", "--ignore=E203,W503"]
+      - id: isort
+        name: Sorting import statements
+        entry: bash -c 'isort "$@"; git add -u' --
+        language: python
+        args: ["--filter-files"]
+        files: \.py$
