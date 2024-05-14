@@ -10,7 +10,10 @@ import openai
 
 import tiktoken
 import spacy
-import math
+
+# In[2]:
+
+
 
 from dotenv import load_dotenv, find_dotenv
 
