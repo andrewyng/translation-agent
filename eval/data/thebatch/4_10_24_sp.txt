@@ -1,0 +1,317 @@
+Source text:
+
+Dear friends,
+
+Planning is a key agentic AI design pattern in which we use a large language model (LLM) to autonomously decide on what sequence of steps to execute to accomplish a larger task. For example, if we ask an agent to do online research on a given topic, we might use an LLM to break down the objective into smaller subtasks, such as researching specific subtopics, synthesizing findings, and compiling a report. 
+
+Many people had a “ChatGPT moment” shortly after ChatGPT was released, when they played with it and were surprised that it significantly exceeded their expectation of what AI can do. If you have not yet had a similar “AI Agentic moment,” I hope you will soon. I had one several months ago, when I presented a live demo of a research agent I had implemented that had access to various online search tools. 
+
+I had tested this agent multiple times privately, during which it consistently used a web search tool to gather information and wrote up a summary. During the live demo, though, the web search API unexpectedly returned with a rate limiting error. I thought my demo was about to fail publicly, and I dreaded what was to come next. To my surprise, the agent pivoted deftly to a Wikipedia search tool — which I had forgotten I’d given it — and completed the task using Wikipedia instead of web search. 
+
+This was an AI Agentic moment of surprise for me. I think many people who haven’t experienced such a moment yet will do so in the coming months. It’s a beautiful thing when you see an agent autonomously decide to do things in ways that you had not anticipated, and succeed as a result!
+
+Many tasks can’t be done in a single step or with a single tool invocation, but an agent can decide what steps to take. For example, to simplify an example from the HuggingGPT paper (cited below), if you want an agent to consider a picture of a boy and draw a picture of a girl in the same pose, the task might be decomposed into two distinct steps: (i) detect the pose in the picture of the boy and (ii) render a picture of a girl in the detected pose. An LLM might be fine-tuned or prompted (with few-shot prompting) to specify a plan by outputting a string like "{tool: pose-detection, input: image.jpg, output: temp1 } {tool: pose-to-image, input: temp1, output: final.jpg}". 
+
+
+This structured output, which specifies two steps to take, then triggers software to invoke a pose detection tool followed by a pose-to-image tool to complete the task. (This example is for illustrative purposes only; HuggingGPT uses a different format.) 
+
+Admittedly, many agentic workflows do not need planning. For example, you might have an agent reflect on, and improve, its output a fixed number of times. In this case, the sequence of steps the agent takes is fixed and deterministic. But for complex tasks in which you aren’t able to specify a decomposition of the task into a set of steps ahead of time, Planning allows the agent to decide dynamically what steps to take. 
+
+On one hand, Planning is a very powerful capability; on the other, it leads to less predictable results. In my experience, while I can get the agentic design patterns of Reflection and Tool use to work reliably and improve my applications’ performance, Planning is a less mature technology, and I find it hard to predict in advance what it will do. But the field continues to evolve rapidly, and I'm confident that Planning abilities will improve quickly. 
+
+If you’re interested in learning more about Planning with LLMs, I recommend:
+
+“Chain-of-Thought Prompting Elicits Reasoning in Large Language Models,” Wei et al. (2022)
+“HuggingGPT: Solving AI Tasks with ChatGPT and its Friends in Hugging Face,” Shen et al. (2023)
+“Understanding the planning of LLM agents: A survey,” by Huang et al. (2024)
+Keep learning!
+
+Andrew
+
+P.S. Making sure your RAG system has access to the data it needs to answer questions is an important, but often laborious, step for good performance. Our new short course “Preprocessing Unstructured Data for LLM Applications,” taught by Matt Robinson of Unstructured, teaches you how to build systems that can easily ingest data from a wide range of formats (like text, images, and tables) and from many different sources (like PDF, PowerPoint, and HTML). You’ll learn practical ways to extract and normalize content from diverse formats, enrich your content with metadata to enable more powerful retrieval and reasoning, and use document layout analysis and vision transformers to process embedded images and tables. Putting these components together, you’ll build a RAG bot that draws from multiple document types, demonstrating how high-quality data ingestion and preprocessing affect the quality of RAG output. Sign up here!
+
+News
+
+Coding Agents Proliferate
+New coding tools act like agents to automate software programming tasks. 
+
+What’s new: A wave of open source software-development tools based on large language models take advantage of the ability of large language models to plan, critique their own work, and extend themselves by calling functions. 
+
+How it works: These projects follow hot on the heels of Cognition’s Devin, a commercial system billed as a semi-autonomous software developer that’s available to selected customers upon request. Some, like Devin, provide sandboxed chat for natural-language commands, command line shell, code editor, and/or a web browser through which the agent can test code or find documentation. Given a prompt, they generate a step-by-step plan and execute it. They may ask for further information or instructions, and users can interrupt to modify their requests. 
+
+Devika uses Anthropic’s Claude 3, OpenAI’s GPT-4 and GPT-3.5, and models supported by Ollama, a tool that runs large language models locally. Like Devin, Devika runs in a web browser and includes an agent that performs planning and reasoning. A persistent knowledge base and database recalls active projects.
+OpenDevin is based on GPT-4 but has access to more than 100 models via litellm, a package that simplifies API calls. OpenDevin’s developers aim to match Devin’s user interface and enable the system to evaluate its own accuracy. 
+SWE-agent addresses bugs and issues in Github repositories. It can use any language model. Using GPT-4, it resolved 12.3 percent of tasks in the SWE-bench dataset of real-world GitHub issues. (Devin resolved 13.9 percent of SWE-bench tasks. Claude 3, the highest-scoring model not specifically trained for coding, resolved 4.8 percent of SWE-bench tasks.)
+Behind the News: Code-completion tools like Github Copilot and Code Llama quickly have become ubiquitous. AutoGPT, released in 2023, is an open-source generalist AI agent based on GPT-4 that has been used to write and debug code. Recently Replit, known for its Ghostwriter code-completion and chatbot applications, began building its own LLMs for automated code repair. 
+
+Why it matters: Agentic coding tools are distinguished by techniques that enable large language models to plan, reflect on their work, call tools, and collaborate with one another. Users report that, unlike previous coding assistants, the new tools are better at sustaining extended tasks and correcting their own work. 
+
+We’re thinking: Many software developers worry that large language models will make human coders obsolete. We doubt that AI will replace coders, but we believe that coders who use AI will replace those who don’t. Agent-based tools still have a long way to go, but they seem likely to augment programmers’ abilities in a larger development pipeline.
+
+
+What Users Do With Generative AI
+Generative AI is being used mostly to generate ideas.
+
+What’s new: The tech consultancy Filtered studied the most common uses for generative AI. While most gen AI users produced text, the study surprisingly found that users were slightly more likely to generate videos than images.
+
+How it works: The analysts sifted through tens of thousands of posts on popular online forums for anecdotes that described uses of generative AI. The analysts grouped the posts into a list of 100 most popular uses of generative AI and ranked each one by reach and value added. 
+
+Most often, individuals used generative AI as an aid to brainstorming, both at work and otherwise. They also turned to generative AI for specific suggestions, like recommending movies, suggesting holiday destinations, and generating characters for role-playing games.
+Other uses in the top five: text editing, emotional support, deep dives into niche subjects, and searching for information. (One poster used a chatbot to track down the brand of cookie his grandmother liked.)
+Many users employed generative AI to revise their own work, for example troubleshooting or optimizing code, editing emails before sending them, improving marketing copy, or tweaking images.
+Workplace-related uses included drafting cover letters, creating notes in preparation for meetings, summarizing meetings after they happened, and analyzing sales data. Many students found generative AI useful as a learning aid to review course materials or create personalized ways to learn.
+Many users found that generative AI helped them better understand technical information, such as legal advice or medical expertise. Users relied on chatbots for tasks that might have required them to consult a human expert, like drafting legal complaints, summarizing jargon-filled documents, and seeking information on medical test results.
+Behind the news: The range of use cases reflects the huge number of people, from all walks of life and all parts of the world, who are using generative AI tools. In a given week in November 2023, more than 100 million people used ChatGPT, the most popular of these tools. Independently, in February 2024, Pew Research found that 23 percent of U.S. adults had used ChatGPT at least once, including 43 percent of respondents under 30 years old and 37 percent of those with postgraduate degrees. According to the Pew report, 20 percent of all Americans had used ChatGPT for work, and 17 percent had used it for entertainment, with younger and more educated users leading the way.
+
+Why it matters: It’s clear that millions of people use generative AI but less clear how they use it. Understanding how and where they actually apply it is helpful for anyone who aims to develop new generative AI products and services or plans to integrate the tech into their organization.
+
+We’re thinking: While it’s encouraging that more than a fifth of U.S. adults have tried ChatGPT,  it also suggests huge room for growth in generative AI at large.
+
+NEW FROM DEEPLEARNING.AI
+
+Integrate diverse data types into your LLM applications in our new short course built in collaboration with Unstructured. Learn techniques to extract and normalize data from PDFs, tables, and images into a structured format. Sign up today
+
+
+Instability at Stability AI
+The CEO of Stability AI resigned as the company faces an increasingly competitive market.
+
+What’s new: Emad Mostaque stepped down from Stability AI, developer of the Stable Diffusion image generator among other models, amid financial woes, uncertain direction, and sinking confidence from investors and employees alike, Forbes reported. Mostaque’s departure followed the exits of numerous executives and key employees.
+
+How it works: Stability confirmed Mostaque’s departure in a blog post. The company’s chief operating officer Shan Shan Wong and chief technology officer Christian Laforte will act as co-CEOs until its directors find a permanent replacement. They inherit a company with troubles beyond leadership. 
+
+Stability faces serious cash-flow issues. In 2023, it projected $11 million in revenue against $153 million in costs. Currently it spends $8 million monthly compared to revenue of $3 million in November and $5.4 million in February.
+The company’s bill for processing power provided by Amazon Web Services, Google, and CoreWeave amounts to $99 million annually. It often failed to pay on time. Stability contemplated reselling access to its leased GPUs to make up for its revenue shortfall.
+Stability struggled to commercialize its models. It tried to strike deals with companies such as Samsung, Snap, and Canva and governments such as Singapore, but the parties couldn’t agree on terms.
+Throughout 2023, it tried to raise funds by courting investors like Nvidia and Google. Negotiations failed partly over questions about the company’s finances. Ultimately it sought a buyer, but no deal emerged.
+Stability faces unpredictable liabilities due to lawsuits over its alleged use of copyrighted images as training data and its models’ ability to produce images in the styles of human artists. 
+Behind the news: Despite its troubles, Stability continued to release new models. In February, it opened the waitlist for the third-generation version of Stable Diffusion. Last month, it released Stable Video 3D, a project in which the team produced three-dimensional objects from images. This month, it released Stable Audio 2.0, which can produce music files up to three minutes long from a text prompt.
+
+Why it matters: Stability has been a standard bearer for open-source AI in a field where tech giants aim to dominate with closed models. Effective leadership could have a major impact on the models available to developers in the years ahead. 
+
+We’re thinking: Stability helped capture the public imagination during the generative AI boom of 2022, and its open models, particularly its diffusion models, have been a huge benefit to the AI community. We hope new leadership puts the company on firm footing.
+
+
+A Transformer Alternative Emerges
+An architectural innovation improves upon transformers — up to 2 billion parameters, at least. 
+
+What’s new: Albert Gu at Carnegie Mellon University and Tri Dao at Princeton University developed the Mamba architecture, a refinement of the earlier state space sequence architecture. A relatively small Mamba produced tokens five times faster and achieved better accuracy than a vanilla transformer of similar size while processing input up to a million tokens long.
+
+Structured State Space Sequence (S4) basics: S4s, also known as structured SSMs, can be functionally similar to recurrent neural networks (RNNs): They can accept one token at time and produce a linear combination of the current token and an embedding that represents all previous tokens. Unlike RNNs and their extensions including LSTMs — but like transformers — they can also perform an equivalent computation in parallel during training. In addition, they are more computationally efficient than transformers. An S4’s computation and memory requirements rise linearly with input size, while a vanilla transformer’s rise quadratically — a heavy burden with long input sequences.
+
+Key insight: S4s are more efficient than transformers but, while a transformer’s input length is limited only by processing and memory, an S4’s input length is limited by how well its hidden state can represent previously input tokens as new tokens arrive. A gating mechanism that lets the model process the most important parts of an input and ignore the rest can enable it to process longer inputs. One viable gate: Typically S4s apply the same mathematical function to all input tokens, whose parameters consist of four learned matrices. Changing the matrices for each input enables the model to learn which tokens or parts of tokens are least important and can be ignored (set to zero). This condenses the input, enabling the modified S4 to process very long input sequences.
+
+How it works: Mamba is made up of blocks, each of which includes a modified S4 (which the authors call a selective SSM). The authors pretrained different instances on a variety of tasks including generating tokens from The Pile (a collection of text from the web) and predicting DNA base pairs in HG38 (a single human genome) in sequences up to 1 million tokens long. 
+
+In each block, the authors replaced three of the S4’s four fixed matrices with learned linear functions of the input. That is, they replaced each of three learned matrices with a learned matrix multiplied by the input. (The authors hypothesized that modifying the fourth matrix would not help, so they didn’t change it.)
+The following layer multiplied the model’s output with a linear projection of the block’s input. This acted as a gate to filter out irrelevant parts of the embedding.
+Results: Mamba achieved better speed and accuracy than transformers of similar size, including tasks that involved inputs of 1 million tokens. 
+
+Running on an Nvidia A100 GPU with 80GB, a Mamba of 1.4 billion parameters produced 1,446 tokens per second, while a transformer of 1.3 billion parameters produced 344 tokens per second.
+In sizes from 130 million parameters to 2.8 billion parameters, Mamba outperformed the transformer Pythia and the S4 H3 on many tasks. It was better at predicting the next word of The Pile, and it was better at question-answering tasks such as WinoGrande and HellaSwag. For instance, on WinoGrande, using models of roughly 2.8 billion parameters, Mamba achieved 63.5 percent accuracy, Pythia 59.7 percent accuracy, and H3 61.4 percent accuracy. 
+After fine-tuning on Great Apes DNA Classification (classifying DNA segments up to 1 million tokens long as belonging to one of five species of great ape), using models of 1.4 million parameters, Mamba achieved 70 percent accuracy, while Hyena DNA achieved 55 percent accuracy.
+Yes, but: The authors tested model sizes much smaller than current state-of-the-art large language models. 
+
+Why it matters: Google’s transformer-based Gemini 1.5 Pro offers context lengths up to 1 million tokens, but methods for building such models aren’t yet widely known. Mamba provides an alternative architecture that can accommodate very long input sequences while processing them more efficiently. Whether it delivers compelling benefits over large transformers and variations that provide higher efficiency and larger context is a question for further research
+
+We're thinking: Research on Mamba is gaining momentum. Other teams are probing the architecture in projects like Motion Mamba, Vision Mamba, MoE-Mamba, MambaByte, and Jamba.
+------------
+
+Translation:
+
+{
+  "suggestions": [
+    {
+      "issue": "Terminology Consistency",
+      "correction": "Change 'patrón de diseño agente clave en la inteligencia artificial' to 'patrón de diseño agente de IA' for consistency and compactness."
+    },
+    {
+      "issue": "Technical Term Translation",
+      "correction": "Change 'modelo de lenguaje grande (LLM)' to 'modelo de lenguaje de gran escala (LLM)' to reflect common technical usage in Spanish."
+    },
+    {
+      "issue": "Phrase Adjustment for Natural Flow",
+      "correction": "Revise 'si aún no has tenido un momento similar de \"IA Agente\", espero que lo tengas pronto' to 'si aún no has vivido un momento similar de \"IA Agente\", espero que pronto lo experimentes' for a more natural flow."
+    },
+    {
+      "issue": "Consistency in Terminology",
+      "correction": "Use 'herramienta de búsqueda web' consistently instead of 'herramienta de búsqueda en la web'."
+    },
+    {
+      "issue": "Clarification of Phrasing",
+      "correction": "Change 'Este fue un momento de sorpresa agente de IA para mí' to 'Este fue un momento de sorpresa provocado por la IA agente para mí' for clarity."
+    },
+    {
+      "issue": "Technical Description Accuracy",
+      "correction": "Ensure technical terms in the structured output example are not translated or altered."
+    },
+    {
+      "issue": "Formal Tone Consistency",
+      "correction": "Change '¡Sigue aprendiendo!' to 'Continúa aprendiendo' to maintain a formal tone."
+    },
+    {
+      "issue": "Course Title Translation",
+      "correction": "Specify 'aplicaciones de LLM' in the course title translation for clarity."
+    },
+    {
+      "issue": "Use of Acronyms",
+      "correction": "Provide a brief explanation for the acronym 'RAG' if it is not widely known in the target audience's field."
+    },
+    {
+      "issue": "Link Translation",
+      "correction": "Ensure that the link associated with '¡Inscríbete aquí!' is functional and appropriate for a Spanish-speaking audience."
+    }
+  ]
+}
+
+Queridos amigos,
+
+La planificación es un patrón de diseño agente de IA en el que utilizamos un modelo de lenguaje de gran escala (LLM) para decidir autónomamente qué secuencia de pasos ejecutar para lograr una tarea más amplia. Por ejemplo, si le pedimos a un agente que realice una investigación en línea sobre un tema dado, podríamos usar un LLM para desglosar el objetivo en sub-tareas más pequeñas, como investigar subtemas específicos, sintetizar hallazgos y compilar un informe.
+
+Muchas personas tuvieron un "momento ChatGPT" poco después de que se lanzara ChatGPT, cuando jugaron con él y se sorprendieron de que superara significativamente sus expectativas sobre lo que la IA puede hacer. Si aún no has vivido un momento similar de "IA Agente", espero que pronto lo experimentes. Yo tuve uno hace varios meses, cuando presenté una demostración en vivo de un agente de investigación que había implementado y que tenía acceso a diversas herramientas de búsqueda en línea.
+
+Había probado este agente varias veces en privado, durante las cuales usó consistentemente una herramienta de búsqueda web para recopilar información y redactar un resumen. Sin embargo, durante la demostración en vivo, la API de búsqueda web devolvió inesperadamente un error de límite de tasa. Pensé que mi demostración estaba a punto de fallar públicamente y temía lo que vendría a continuación. Para mi sorpresa, el agente cambió hábilmente a una herramienta de búsqueda en Wikipedia, que había olvidado que le había dado, y completó la tarea usando Wikipedia en lugar de la búsqueda web.
+
+Este fue un momento de sorpresa provocado por la IA agente para mí. Creo que muchas personas que aún no han experimentado un momento así lo harán en los próximos meses. ¡Es algo hermoso cuando ves a un agente decidir autónomamente hacer cosas de maneras que no habías anticipado y tener éxito como resultado!
+
+Muchas tareas no se pueden realizar en un solo paso o con una sola invocación de herramienta, pero un agente puede decidir qué pasos tomar. Por ejemplo, para simplificar un ejemplo del documento HuggingGPT (citado a continuación), si quieres que un agente considere una imagen de un niño y dibuje una imagen de una niña en la misma pose, la tarea podría descomponerse en dos pasos distintos: (i) detectar la pose en la imagen del niño y (ii) renderizar una imagen de la niña en la pose detectada. Un LLM podría ser ajustado o solicitado (con pocos ejemplos) para especificar un plan emitiendo una cadena como "{herramienta: detección-de-pose, entrada: imagen.jpg, salida: temp1} {herramienta: pose-a-imagen, entrada: temp1, salida: final.jpg}".
+
+Esta salida estructurada, que especifica dos pasos a seguir, luego activa el software para invocar una herramienta de detección de poses seguida de una herramienta de pose a imagen para completar la tarea. (Este ejemplo es solo para fines ilustrativos; HuggingGPT utiliza un formato diferente).
+
+Admito que muchos flujos de trabajo agentes no necesitan planificación. Por ejemplo, podrías tener un agente que reflexione y mejore su salida un número fijo de veces. En este caso, la secuencia de pasos que toma el agente es fija y determinista. Pero para tareas complejas en las que no puedes especificar de antemano una descomposición de la tarea en un conjunto de pasos, la Planificación permite que el agente decida dinámicamente qué pasos tomar.
+
+Por un lado, la Planificación es una capacidad muy poderosa; por otro, conduce a resultados menos predecibles. En mi experiencia, mientras puedo hacer que los patrones de diseño agentes de Reflexión y Uso de Herramientas funcionen de manera confiable y mejoren el rendimiento de mis aplicaciones, la Planificación es una tecnología menos madura, y me resulta difícil predecir de antemano qué hará. Pero el campo continúa evolucionando rápidamente, y estoy seguro de que las habilidades de Planificación mejorarán rápidamente.
+
+Si estás interesado en aprender más sobre la Planificación con LLMs, te recomiendo:
+
+"El estímulo de cadenas de pensamiento provoca razonamiento en modelos de lenguaje de gran escala", Wei et al. (2022)
+"HuggingGPT: Resolviendo tareas de IA con ChatGPT y sus amigos en Hugging Face", Shen et al. (2023)
+"Entendiendo la planificación de agentes LLM: una encuesta", por Huang et al. (2024)
+Continúa aprendiendo!
+
+Andrew
+
+P.D. Asegurarse de que tu sistema RAG tenga acceso a los datos que necesita para responder preguntas es un paso importante, pero a menudo laborioso, para un buen rendimiento. Nuestro nuevo curso corto "Preprocesamiento de datos no estructurados para aplicaciones de LLM", impartido por Matt Robinson de Unstructured, te enseña cómo construir sistemas que puedan ingerir fácilmente datos de una amplia gama de formatos (como texto, imágenes y tablas) y de muchas fuentes diferentes (como PDF, PowerPoint y HTML). Aprenderás formas prácticas de extraer y normalizar contenido de formatos diversos, enriquecer tu contenido con metadatos para habilitar una recuperación y razonamiento más poderosos, y usar análisis de diseño de documentos y transformadores de visión para procesar imágenes y tablas incrustadas. Al combinar estos componentes, construirás un bot RAG que extraiga de múltiples tipos de documentos, demostrando cómo la ingesta y el preprocesamiento de datos de alta calidad afectan la calidad de la salida de RAG. ¡Inscríbete aquí!{
+  "suggestions": [
+    {
+      "issue": "Accuracy and Terminology",
+      "correction": "Replace 'chat en caja de arena' with 'chat en un entorno controlado' to better convey the concept of a sandboxed environment."
+    },
+    {
+      "issue": "Terminology Consistency",
+      "correction": "Ensure consistent use of 'modelos de lenguaje grandes' throughout the translation."
+    },
+    {
+      "issue": "Fluency and Style",
+      "correction": "Rephrase 'Una base de conocimientos y base de datos persistente recuerda los proyectos activos' to 'Una base de conocimientos y una base de datos persistente almacenan información sobre los proyectos activos' for better clarity and fluency."
+    },
+    {
+      "issue": "Accuracy and Style",
+      "correction": "Change 'permitir que el sistema evalúe su propia precisión' to 'habilitar al sistema para evaluar su propia precisión' for more precise language use."
+    },
+    {
+      "issue": "Terminology and Style",
+      "correction": "Use 'autocompletado de código' instead of 'completado de código' to align with common terminology in the tech Spanish-speaking community."
+    },
+    {
+      "issue": "Fluency",
+      "correction": "Modify 'Estamos pensando: Muchos desarrolladores de software temen que los grandes modelos de lenguaje harán obsoletos a los programadores humanos' to 'Reflexionamos sobre cómo muchos desarrolladores de software temen que los grandes modelos de lenguaje puedan volver obsoletos a los programadores humanos' for improved readability."
+    },
+    {
+      "issue": "Grammar and Punctuation",
+      "correction": "Add necessary punctuation for clarity in complex sentences."
+    },
+    {
+      "issue": "Style and Fluency",
+      "correction": "Change 'Las herramientas basadas en agentes todavía tienen un largo camino por recorrer' to 'Las herramientas basadas en agentes aún deben recorrer un largo camino' for a more natural expression in Spanish."
+    },
+    {
+      "issue": "Terminology",
+      "correction": "Ensure consistent use of 'agentes' when referring to AI agents."
+    },
+    {
+      "issue": "Accuracy",
+      "correction": "Clarify 'los usuarios pueden interrumpir para modificar sus solicitudes' to 'los usuarios pueden interrumpir el proceso para modificar sus solicitudes' to emphasize that it is the process that is being interrupted."
+    }
+  ]
+}
+
+Cómo funciona: Estos proyectos siguen de cerca a Devin de Cognition, un sistema comercial presentado como un desarrollador de software semi-autónomo que está disponible para clientes seleccionados bajo solicitud. Algunos, como Devin, proporcionan un chat en un entorno controlado para comandos en lenguaje natural, shell de línea de comandos, editor de código y/o un navegador web a través del cual el agente puede probar código o encontrar documentación. Dado un indicativo, generan un plan paso a paso y lo ejecutan. Pueden solicitar más información o instrucciones, y los usuarios pueden interrumpir el proceso para modificar sus solicitudes.
+
+Devika utiliza Claude 3 de Anthropic, GPT-4 y GPT-3.5 de OpenAI, y modelos compatibles con Ollama, una herramienta que ejecuta modelos de lenguaje grandes localmente. Al igual que Devin, Devika funciona en un navegador web e incluye un agente que realiza planificación y razonamiento. Una base de conocimientos y una base de datos persistente almacenan información sobre los proyectos activos.
+OpenDevin se basa en GPT-4 pero tiene acceso a más de 100 modelos a través de litellm, un paquete que simplifica las llamadas a la API. Los desarrolladores de OpenDevin aspiran a igualar la interfaz de usuario de Devin y habilitar al sistema para evaluar su propia precisión.
+SWE-agent aborda errores y problemas en repositorios de Github. Puede utilizar cualquier modelo de lenguaje. Utilizando GPT-4, resolvió el 12.3 por ciento de las tareas en el conjunto de datos SWE-bench de problemas reales de GitHub. (Devin resolvió el 13.9 por ciento de las tareas de SWE-bench. Claude 3, el modelo con la puntuación más alta no específicamente entrenado para codificación, resolvió el 4.8 por ciento de las tareas de SWE-bench).
+Detrás de las noticias: Herramientas de autocompletado de código como Github Copilot y Code Llama se han vuelto ubicuas rápidamente. AutoGPT, lanzado en 2023, es un agente de IA generalista de código abierto basado en GPT-4 que ha sido utilizado para escribir y depurar código. Recientemente, Replit, conocido por sus aplicaciones de autocompletado de código Ghostwriter y chatbot, comenzó a construir sus propios modelos de lenguaje grandes para la reparación automática de código.
+
+Por qué es importante: Las herramientas de codificación agénticas se distinguen por técnicas que permiten a los grandes modelos de lenguaje planificar, reflexionar sobre su trabajo, llamar a herramientas y colaborar entre sí. Los usuarios informan que, a diferencia de los asistentes de codificación anteriores, las nuevas herramientas son mejores para sostener tareas prolongadas y corregir su propio trabajo.
+
+Reflexionamos sobre cómo muchos desarrolladores de software temen que los grandes modelos de lenguaje puedan volver obsoletos a los programadores humanos. Dudamos que la IA reemplace a los codificadores, pero creemos que los codificadores que usan IA reemplazarán a aquellos que no lo hacen. Las herramientas basadas en agentes aún deben recorrer un largo camino, pero parece probable que aumenten las capacidades de los programadores en un proceso de desarrollo más amplio.{
+  "suggestions": [
+    {
+      "type": "accuracy",
+      "detail": "Changed 'más de una quinta parte' to 'una quinta parte' to accurately reflect the original text."
+    },
+    {
+      "type": "fluency",
+      "detail": "Changed 'publicación de blog' to 'entrada de blog' for common usage in Spanish."
+    },
+    {
+      "type": "accuracy",
+      "detail": "Added 'actualmente' to clarify the present tense regarding Stability's financial issues."
+    },
+    {
+      "type": "terminology",
+      "detail": "Changed 'GPUs arrendadas' to 'GPUs alquiladas' for natural term usage in Spanish."
+    },
+    {
+      "type": "fluency",
+      "detail": "Changed 'luchó por' to 'tuvo dificultades para' to avoid awkward translation of 'struggled'."
+    },
+    {
+      "type": "accuracy",
+      "detail": "Changed 'responsabilidades' to 'pasivos' to correctly translate 'liabilities'."
+    },
+    {
+      "type": "style",
+      "detail": "Changed 'ponga a la compañía en una posición firme' to 'asiente la compañía sobre una base sólida' for idiomatic expression."
+    },
+    {
+      "type": "terminology",
+      "detail": "Used italics for 'Stable Diffusion' to indicate it as a product name."
+    }
+  ]
+}
+
+Estamos pensando: Aunque es alentador que una quinta parte de los adultos en EE. UU. hayan probado ChatGPT, también sugiere un enorme margen de crecimiento para la inteligencia artificial generativa en general.
+
+NOVEDADES DE DEEPLEARNING.AI
+
+Integra diversos tipos de datos en tus aplicaciones LLM en nuestro nuevo curso corto desarrollado en colaboración con Unstructured. Aprende técnicas para extraer y normalizar datos de PDFs, tablas e imágenes en un formato estructurado. Inscríbete hoy.
+
+Inestabilidad en Stability AI
+El CEO de Stability AI renunció mientras la compañía enfrenta un mercado cada vez más competitivo.
+
+Novedades: Emad Mostaque renunció a Stability AI, desarrollador del generador de imágenes *Stable Diffusion* entre otros modelos, en medio de problemas financieros, dirección incierta y confianza decreciente de inversores y empleados por igual, informó Forbes. La salida de Mostaque siguió a la de numerosos ejecutivos y empleados clave.
+
+Cómo funciona: Stability confirmó la salida de Mostaque en una entrada de blog. El director de operaciones de la compañía, Shan Shan Wong, y el director tecnológico, Christian Laforte, actuarán como co-CEOs hasta que sus directores encuentren un reemplazo permanente. Heredan una compañía con problemas más allá del liderazgo.
+
+Stability actualmente enfrenta serios problemas de flujo de caja. En 2023, proyectó 11 millones de dólares en ingresos frente a 153 millones de dólares en costos. Actualmente gasta 8 millones de dólares mensuales en comparación con ingresos de 3 millones en noviembre y 5.4 millones en febrero.
+La factura de la compañía por el poder de procesamiento proporcionado por Amazon Web Services, Google y CoreWeave asciende a 99 millones de dólares anuales. A menudo no logró pagar a tiempo. Stability contempló revender el acceso a sus GPUs alquiladas para compensar su déficit de ingresos.
+Stability tuvo dificultades para comercializar sus modelos. Intentó cerrar tratos con compañías como Samsung, Snap y Canva y gobiernos como el de Singapur, pero las partes no pudieron acordar los términos.
+A lo largo de 2023, intentó recaudar fondos cortejando a inversores como Nvidia y Google. Las negociaciones fracasaron en parte por preguntas sobre las finanzas de la compañía. Finalmente buscó un comprador, pero no surgió ningún acuerdo.
+Stability enfrenta pasivos impredecibles debido a demandas por su supuesto uso de imágenes con derechos de autor como datos de entrenamiento y la capacidad de sus modelos para producir imágenes en los estilos de artistas humanos.
+Detrás de las noticias: A pesar de sus problemas, Stability continuó lanzando nuevos modelos. En febrero, abrió la lista de espera para la versión de tercera generación de *Stable Diffusion*. El mes pasado, lanzó *Stable Video 3D*, un proyecto en el que el equipo produjo objetos tridimensionales a partir de imágenes. Este mes, lanzó *Stable Audio 2.0*, que puede producir archivos de música de hasta tres minutos de duración a partir de un texto.
+
+Por qué es importante: Stability ha sido un estandarte para la IA de código abierto en un campo donde los gigantes tecnológicos aspiran a dominar con modelos cerrados. Un liderazgo efectivo podría tener un gran impacto en los modelos disponibles para los desarrolladores en los años venideros.
+
+Estamos pensando: Stability ayudó a capturar la imaginación del público durante el auge de la IA generativa de 2022, y sus modelos abiertos, particularmente sus modelos de difusión, han sido de gran beneficio para la comunidad de IA. Esperamos que el nuevo liderazgo asiente la compañía sobre una base sólida.En cada bloque, los autores reemplazaron tres de las cuatro matrices estáticas del S4 con funciones lineales aprendidas basadas en la entrada. Es decir, sustituyeron cada una de las tres matrices aprendidas por una matriz aprendida que se multiplica por la entrada. (Los autores hipotetizaron que modificar la cuarta matriz no sería beneficioso, por lo que decidieron no alterarla).
+La capa siguiente multiplicó la salida del modelo con una proyección lineal de la entrada del bloque. Esto funcionó como una compuerta para filtrar las partes irrelevantes del embedding.
+Resultados: Mamba logró una mejor velocidad y precisión que los transformadores de tamaño similar, incluyendo tareas que involucraban entradas de 1 millón de tokens.
+
+Funcionando en una GPU Nvidia A100 con 80GB, un Mamba con 1.400 millones de parámetros produjo 1.446 tokens por segundo, mientras que un transformador con 1.300 millones de parámetros produjo 344 tokens por segundo.
+En tamaños desde 130 millones de parámetros hasta 2.800 millones de parámetros, Mamba superó al transformador Pythia y al S4 H3 en muchas tareas. Fue más eficaz prediciendo la próxima palabra de The Pile, y se desempeñó mejor en tareas de respuesta a preguntas como WinoGrande y HellaSwag. Por ejemplo, en WinoGrande, utilizando modelos de aproximadamente 2.800 millones de parámetros, Mamba alcanzó un 63.5 por ciento de precisión, Pythia un 59.7 por ciento de precisión, y H3 un 61.4 por ciento de precisión.
+Después de un ajuste fino en la Clasificación de ADN de Grandes Simios (clasificando segmentos de ADN de hasta 1 millón de tokens de longitud como pertenecientes a una de cinco especies de grandes simios), utilizando modelos de 1.400 millones de parámetros, Mamba logró un 70 por ciento de precisión, mientras que ADN de Hiena alcanzó un 55 por ciento de precisión.
+Sin embargo, es importante destacar que los autores probaron tamaños de modelo mucho menores que los modelos de lenguaje grandes de última generación actuales.
+
+Por qué importa: El transformador basado en Gemini 1.5 Pro de Google ofrece longitudes de contexto de hasta 1 millón de tokens, pero los métodos para construir tales modelos aún no son ampliamente conocidos. Mamba proporciona una arquitectura alternativa que puede acomodar secuencias de entrada muy largas mientras las procesa de manera más eficiente. La pregunta de si ofrece beneficios convincentes sobre los grandes transformadores y sus variantes, que proporcionan mayor eficiencia y un contexto más amplio, queda para futuras investigaciones.
+
+Estamos pensando: La investigación sobre Mamba está ganando impulso. Otros equipos están investigando la arquitectura en proyectos como Motion Mamba, Vision Mamba, MoE-Mamba, MambaByte y Jamba.

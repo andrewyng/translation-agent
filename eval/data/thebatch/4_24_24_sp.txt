@@ -1,0 +1,314 @@
+Source text:
+
+Dear friends,
+
+Much has been said about many companies’ desire for more compute (as well as data) to train larger foundation models. I think it’s under-appreciated that we have nowhere near enough compute available for inference on foundation models as well.
+
+Years ago, when I was leading teams at Google, Baidu, and Stanford that focused on scaling up deep learning algorithms, many semiconductor manufacturers, data center operators, and academic researchers asked me whether I felt that AI technology would continue to make good use of more compute if they kept on delivering it. For many normal desktop processing workloads, like running a web browser or a text editor, having a faster CPU doesn’t help that much beyond a certain point. So do we really need faster and faster AI processors to train larger and larger models? Each time, I confidently replied “yes!” and encouraged them to keep scaling up compute. (Sometimes, I added half-jokingly that I had never met a machine learning engineer who felt like they had enough compute. 😀)
+
+Fortunately, this prediction has been right so far. However, beyond training, I believe we are also far from exhausting the benefits of faster and higher volumes of inference.
+
+Today, a lot of LLM output is primarily for human consumption. A human might read around 250 words per minute, which is around 6 tokens per second (250 words/min / (0.75 words/token) / (60 secs/min)). So it might initially seem like there’s little value to generating tokens much faster than this.  
+
+But in an agentic workflow, an LLM might be prompted repeatedly to reflect on and improve its output, use tools, plan and execute sequences of steps, or implement multiple agents that collaborate with each other. In such settings, we might easily generate hundreds of thousands of tokens or more before showing any output to a user. This makes fast token generation very desirable and makes slower generation a bottleneck to taking better advantage of existing foundation models.
+
+
+That’s why I’m excited about the work of companies like Groq, which can generate hundreds of tokens per second. Recently, SambaNova published an impressive demo that hit hundreds of tokens per second.
+
+Incidentally, faster, cheaper token generation will also help make running evaluations (evals), a step that can be slow and expensive today since it typically involves iterating over many examples, more palatable. Having better evals will help many developers with the process of tuning models to improve their performance.
+
+Fortunately, it appears that both training and inference are rapidly becoming cheaper. I recently spoke with Cathie Wood and Charles Roberts of the investment firm ARK, which is famous for its bullish predictions on tech. They estimate that AI training costs are falling at 75% a year. If they are right, a foundation model that costs $100M to train this year might cost only $25M to train next year. Further, they report that for “enterprise scale use cases, inference costs seem to be falling at an annual rate of ~86%, even faster than training costs.”
+
+I don’t know how accurate these specific predictions will turn out to be, but with improvements in both semiconductors and algorithms, I do see training and inference costs falling rapidly. This will be good for application builders and help AI agentic workflows lift off.
+
+Keep learning!
+
+Andrew
+
+P.S. New short course with Mistral AI! Mistral’s open-source Mixtral 8x7B model uses a mixture of experts (MoE) architecture. Unlike a standard transformer, MoE uses multiple expert feed-forward networks with a gating network that selects a number of experts at inference time. This enables MoE to match the performance of larger models but with faster inference. Mixtral 8x7B has 46.7B parameters but activates only 12.9B at inference time to predict the next token. In “Getting Started with Mistral,” taught by Sophia Yang, you’ll explore Mistral’s open-source (Mistral 7B, Mixtral 8x7B) and commercial models, learn about function calling for tool use with Mistral, and build a Mistral-powered chat interface that can reference external documents. Please sign up here!
+
+News
+
+Songs Made to Order
+A new breed of audio generator produces synthetic performances of songs in a variety of popular styles.
+
+What’s new: Udio launched a web-based, text-to-song generator that creates songs in styles from barbershop to heavy metal. Suno, which debuted its service late last year with similar capabilities, upgraded to its offering.
+
+How it works: Both services take text prompts and generate full-band productions complete with lyrics, vocals, and instrumental solos, two separate generations per prompt. Users can generate lyrics to order or upload their own words, and they can download, share, and/or post the results for others to hear. Leaderboards rank outputs according to plays and likes. 
+
+Founded by alumni of Google’s DeepMind division, Udio lets registered users generate up to 1,200 songs monthly for free and expects to offer paid services at an unspecified future date. Users enter a text prompt and/or choose style tags. The system automatically replaces artist names with stylistic descriptions but sometimes produces results that sound uncannily like the artists requested. Users can choose to generate an instrumental track or add lyrics, allocating them to verse, chorus, or background vocals. Udio generates audio segments 33 seconds long, which users can extend, remix, and modify. The company has not released information about the underlying technology. 
+Suno lets users generate 10 songs daily for free or pay to generate more. Enter a prompt, and the system generates complete songs up to 2 minutes long; alternatively, users can specify lyrics, style, and title in separate prompts. The system refuses to generate music from prompts that include the name of a real-world artist. Suno hasn’t disclosed technical information, but last year it released an open-source model called Bark that turns a text prompt into synthetic music, speech, and/or sound effects.
+Behind the news: Most earlier text-to-music generators were designed to produce relatively free-form instrumental compositions rather than songs with structured verses, choruses, and vocals. Released earlier this month, Stable Audio 2 generates instrumental tracks up to three minutes long that have distinct beginnings, middles, and endings. Users can also upload audio tracks and use Stable Audio 2.0 to modify them.
+
+Yes, but: Like text-to-image generators circa last year, current text-to-music models offer little ability to steer their output. They don’t respond consistently to basic musical terminology such as “tempo” and “harmony,” and requesting a generic style like “pop” can summon a variety of subgenres from the last 50 years of popular music.
+
+Why it matters: With the advent of text-to-music models that produce credible songs, audio generation seems primed for a Midjourney moment, when the public realizes that it can produce customized music at the drop of a prompt. Already Udio’s and Suno’s websites are full of whimsical paeans to users’ pets and hobbies. The technology has clear implications for professional performers and producers, who, regrettably, have little choice but to adapt to increasing automation. But for now fans have fun, new toys to play with. 
+
+We’re thinking: You can dance to these algo-rhythms!
+
+
+Benchmarks for Industry
+How well do large language models respond to professional-level queries in various industry domains? A new company aims to find out.
+
+What’s new: Vals.AI, an independent model testing service, developed benchmarks that rank large language models’ performance of tasks associated with income taxes, corporate finance, and contract law; it also maintains a pre-existing legal benchmark. Open AI’s GPT-4 and Anthropic’s Claude 3 Opus did especially well in recent tests. 
+
+How it works: Vals AI hosts leaderboards that compare the performance of several popular large language models (LLMs) with respect to accuracy, cost, and speed, along with with analysis of the results. The company worked with independent experts to develop multiple-choice and open-ended questions in industrial domains. The datasets are not publicly available. 
+
+ContractLaw includes questions related to contracts. They ask models to retrieve parts of contracts that are relevant to particular terms, edit excerpts, and determine whether excerpts meet legal standards.
+CorpFin tests accuracy in answering corporate finance questions. It feeds to models a public commercial credit agreement — terms of a business loan or a line of credit — and poses questions that require extracting information and reasoning over it.
+TaxEval tests accuracy on tax-related prompts. Half of the questions test skills like calculating taxable income, marginal rate, and the like. The other half cover knowledge such as how different accounting methods impact taxes or how taxes apply to various types of assets.
+Vals AI also tracks performance on LegalBench, an open benchmark that evaluates legal reasoning.
+Results: Among 15 models, GPT-4 and Claude 3 Opus dominated Vals.AI’s leaderboards as of April 11, 2024. GPT-4 topped CorpFin and TaxEval, correctly answering 64.8 and 54.5 percent of questions, respectively. Claud 3 Opus narrowly beat GPT-4 on ContractLaw and LegalBench, achieving 74.0 and 77.7 percent, respectively. The smaller Claude 3 Sonnet took third place in ContractLaw, CorpFin, and TaxEval with 67.6, 61.4, and 37.1 percent. Google’s Gemini Pro 1.0 took third place in LegalBench with 73.6 percent.
+
+Behind the news: Many practitioners in finance and law use LLMs in applications that range from processing documents to predicting interest rates. However, LLM output in such applications requires oversight. In 2023, a New York state judge reprimanded a lawyer for submitting an AI-generated brief that referred to fictitious cases.
+
+Why it matters: Typical AI benchmarks are designed to evaluate general knowledge and cognitive abilities. Many developers would like to measure more directly performance in real-world business contexts, where specialized knowledge may come into play. 
+
+We’re thinking: Open benchmarks can benefit from public scrutiny, and they’re available to all developers. However, they can be abused when developers cherry-pick benchmarks on which their models perform especially well. Moreover, they may find their way into training sets, making for unfair comparisons. Independent testing on proprietary benchmarks is one way to address these issues.
+
+NEW FROM DEEPLEARNING.AI
+
+Join “Getting Started with Mistral” and access Mistral AI’s open source and commercial models via API calls. Learn to select the right model for your use case and get hands-on with features like JSON mode, function calling, and effective prompting techniques. Enroll for free!
+
+
+AI Progress Report: Manufacturing
+Manufacturers are embracing AI even as they struggle to find the talent and data required.
+
+What’s new: The market-research arm of MIT Technology Review surveyed manufacturers’ use of AI in engineering, design, procurement, and production. All respondents were at least experimenting with AI, and many expect to launch their first deployments in the next year or two. Microsoft sponsored the research.
+
+How it works: The authors interviewed executives at 300 manufacturers in aerospace, automotive, chemicals, electronics, and heavy equipment. All were either applying or considering AI in product design or factory operations. 
+
+The most common uses of AI in production involved designing products, creating content such as technical documentation, and building chatbots. The most common uses in earlier stages were knowledge management and quality control.
+35 percent of respondents had deployed AI in production. Another 37 percent were experimenting with AI, while 27 percent were conducting preliminary research.
+45 percent of respondents in electronics and 39 percent in automotive had deployed AI in production. Larger companies were more likely to have deployed AI (77 percent of companies with revenues over $10 billion compared to 4 percent of those with revenues under $500 million). Larger companies were also more likely to forecast increases in AI spending in the next two years.
+Asked to name the biggest challenges to scaling up uses of AI, respondents most often pointed to shortages of skills and talent. Asked to name challenges their company faced with respect to data, they pointed to maintaining data quality, integrating data from different parts of an organization, and governing data.
+Behind the news: Manufacturers are using AI to help design products, visually inspect goods, and maintain equipment. The field has attracted major players: Last year, Microsoft and Siemens launched a pilot of Industrial Copilot, which enables users to interact in natural language with software that drives assembly lines.
+
+Why it matters: Manufacturers want to use AI, but many face obstacles of talent and data. That spells opportunities for budding practitioners as well as for manufacturers that lack infrastructure for collecting and managing data. 
+
+We’re thinking: One key to successful implementation of AI in manufacturing is tailoring systems to the unique circumstances of each individual facility. The highly heterogeneous tasks, equipment, and surroundings in different factories mean that one model doesn’t fit all. Developers who can solve this long-tail problem stand to reap rewards.
+
+
+A 3D Model From One 2D Image
+Video diffusion provides a new basis for generating 3D models.
+What's new: Vikram Voleti, Chun-Han Yao, Mark Boss, Varun Jampani, and colleagues at Stability AI produced a method that generates a 3D model from a single image based on Stability’s video diffusion model. You can see its output here.
+
+Key insight: The approach known as a Neural Radiance Field (NeRF) learns to create a 3D model from images of the same object shot at various angles. Given a single image of an object, a video diffusion model can learn to generate videos that orbit around it. The frames from such orbital videos give NeRF the information it needs to produce a 3D model. 
+
+How it works: To generate an image, the authors took one step before and two steps during inference. Before inference: Learn to generate an orbital video. During inference: (i) Train a NeRF model on an orbital video. (ii) Improve the 3D model using diffusion following DreamFusion. 
+
+The authors fine-tuned a pretrained Stable Video Diffusion, given an image of an object, to generate an orbital video. They fine-tuned the model on orbital views of synthetic objects in the Objaverse dataset, first without and then with information about the camera’s orbit. They called the fine-tuned model Stable Video 3D (SV3D).
+At inference, SV3D generated an orbital video from an image, where the orbit periodically went up and down to ensure the top and bottom of the object were visible. From these images, the authors trained an Instant-NGP NeRF model, which learned to represent the object as a 3D model and generate pictures from new camera angles based on different views of the same object. 
+To improve the 3D model, the authors first represented it using DMTet instead of Instant-NGP. DMTet is a system of networks built to refine 3D shapes from rough point clouds or low-resolution 3D models. The authors rendered images of DMTet’s 3D model along random camera orbits. For each image, the authors added noise to the image’s representation and removed it using SV3D. DMTet learned to update its 3D model to minimize the difference between the rendered image and the updated version from SV3D.
+Results: The authors produced 3D models from images of 50 objects in GSO, a 3D object dataset of scanned household items. They compared their 3D models to those produced by other methods including EscherNet, a method that uses an image diffusion model to generate images of an object from different angles that are used to train a pair of vanilla neural networks to produce a 3D model. Evaluated according to Chamfer distance, a measure of the distance between the points on the ground truth and generated 3D models (lower is better), their method achieved .024, while EscherNet achieved .042.
+
+Why it matters: Video diffusion models must generate different views of the same object, so they require a greater understanding of 3D objects than image diffusion models, which need to generate only one view at a time. Upgrading from an image diffusion model to a video diffusion model makes for better 3D object generation.
+
+We’re thinking: Building 3D models used to be difficult, but with models like this, it's becoming less of a mesh.
+------------
+
+Translation:
+
+{
+  "suggestions": [
+    {
+      "issue": "Terminology",
+      "correction": "Change 'modelos fundamentales' to 'modelos de base' for clarity and specificity in the context of AI."
+    },
+    {
+      "issue": "Style and Fluency",
+      "correction": "Rephrase to avoid repetition and improve flow in the sentence discussing token generation."
+    },
+    {
+      "issue": "Terminology Consistency",
+      "correction": "Use 'evaluaciones' consistently instead of switching between 'evaluaciones' and 'evals'."
+    },
+    {
+      "issue": "Fluency",
+      "correction": "Improve the readability of the sentence discussing the conversation with Cathie Wood and Charles Roberts."
+    },
+    {
+      "issue": "Accuracy and Specificity",
+      "correction": "Ensure verb tense consistency and clarity in the translation discussing the cost of training a foundation model."
+    },
+    {
+      "issue": "Style",
+      "correction": "Revise the awkward sentence structure in the postscript about Mistral's model."
+    },
+    {
+      "issue": "Terminology",
+      "correction": "Change 'en el momento de la inferencia' to 'durante la inferencia' for naturalness."
+    },
+    {
+      "issue": "Fluency and Style",
+      "correction": "Enhance the call to action in the postscript for smoother transition and clarity."
+    },
+    {
+      "issue": "Grammar and Punctuation",
+      "correction": "Check and correct punctuation in enumerations and lists."
+    },
+    {
+      "issue": "Cultural Adaptation",
+      "correction": "Adapt expressions and idioms to fit the cultural context of the target audience."
+    }
+  ]
+}
+
+Queridos amigos,
+
+Se ha hablado mucho sobre el deseo de muchas empresas de contar con más capacidad de cómputo (así como de datos) para entrenar modelos de base más grandes. Creo que se subestima que tampoco disponemos de suficiente capacidad de cómputo para la inferencia en modelos de base.
+
+Hace años, cuando lideraba equipos en Google, Baidu y Stanford que se centraban en escalar algoritmos de aprendizaje profundo, muchos fabricantes de semiconductores, operadores de centros de datos e investigadores académicos me preguntaban si creía que la tecnología de IA seguiría aprovechando bien más capacidad de cómputo si continuaban proporcionándola. Para muchas cargas de trabajo de procesamiento de escritorio normales, como ejecutar un navegador web o un editor de texto, tener una CPU más rápida no ayuda mucho más allá de cierto punto. Entonces, ¿realmente necesitamos procesadores de IA más y más rápidos para entrenar modelos cada vez mayores? Cada vez, respondí con confianza "¡sí!" y los animé a seguir escalando la capacidad de cómputo. (A veces, añadía en broma que nunca había conocido a un ingeniero de aprendizaje automático que sintiera que tenía suficiente capacidad de cómputo. 😀)
+
+Afortunadamente, esta predicción ha sido correcta hasta ahora. Sin embargo, más allá del entrenamiento, creo que también estamos lejos de agotar los beneficios de una inferencia más rápida y de mayor volumen.
+
+Hoy en día, gran parte de la salida de los LLM es principalmente para consumo humano. Un humano podría leer alrededor de 250 palabras por minuto, lo que equivale a aproximadamente 6 tokens por segundo (250 palabras/min / (0.75 palabras/token) / (60 seg/min)). Por lo tanto, inicialmente podría parecer que hay poco valor en generar tokens mucho más rápido que esto.
+
+Pero en un flujo de trabajo agéntico, se podría solicitar repetidamente a un LLM que reflexione y mejore su salida, use herramientas, planifique y ejecute secuencias de pasos o implemente múltiples agentes que colaboren entre sí. En tales configuraciones, podríamos generar fácilmente cientos de miles de tokens o más antes de mostrar cualquier salida a un usuario. Esto convierte la generación rápida de tokens en algo muy deseable y la generación lenta en un cuello de botella para aprovechar mejor los modelos de base existentes.
+
+Es por eso que estoy emocionado con el trabajo de empresas como Groq, que pueden generar cientos de tokens por segundo. Recientemente, SambaNova publicó una demostración impresionante que alcanzó cientos de tokens por segundo.
+
+Incidentalmente, la generación de tokens más rápida y económica también ayudará a hacer que las evaluaciones, un paso que puede ser lento y costoso hoy en día ya que generalmente implica iterar sobre muchos ejemplos, sean más agradables. Tener mejores evaluaciones ayudará a muchos desarrolladores con el proceso de ajustar modelos para mejorar su rendimiento.
+
+Afortunadamente, parece que tanto el entrenamiento como la inferencia se están abaratando rápidamente. Recientemente, conversé con Cathie Wood y Charles Roberts de la firma de inversión ARK, conocida por sus predicciones optimistas sobre la tecnología. Estiman que los costos de entrenamiento de IA están cayendo en un 75% al año. Si tienen razón, un modelo de base que cuesta $100M entrenar este año podría costar solo $25M entrenar el próximo año. Además, informan que para "casos de uso a escala empresarial, los costos de inferencia parecen estar cayendo a una tasa anual de aproximadamente el 86%, incluso más rápido que los costos de entrenamiento".
+
+No sé qué tan precisas resultarán ser estas predicciones específicas, pero con mejoras tanto en semiconductores como en algoritmos, veo que los costos de entrenamiento e inferencia están cayendo rápidamente. Esto será bueno para los constructores de aplicaciones y ayudará a que los flujos de trabajo agénticos de IA despeguen.
+
+¡Sigan aprendiendo!
+
+Andrew
+
+P.D. ¡Nuevo curso corto con Mistral AI! El modelo Mixtral 8x7B de Mistral, de código abierto, emplea una arquitectura de mezcla de expertos (MoE). A diferencia de un transformador estándar, MoE utiliza múltiples redes de avance de expertos con una red de compuertas que selecciona un número de expertos durante la inferencia. Esto permite que MoE iguale el rendimiento de modelos más grandes pero con una inferencia más rápida. Mixtral 8x7B tiene 46.7B de parámetros pero activa solo 12.9B durante la inferencia para predecir el próximo token. En "Introducción a Mistral", impartido por Sophia Yang, explorarás los modelos de código abierto (Mistral 7B, Mixtral 8x7B) y comerciales de Mistral, aprenderás sobre la llamada de funciones para el uso de herramientas con Mistral, y construirás una interfaz de chat impulsada por Mistral que puede hacer referencia a documentos externos. Para más detalles e inscripciones, por favor visita el siguiente enlace.{
+  "suggestions": [
+    {
+      "issue": "Terminology",
+      "correction": "Change 'indicaciones de texto' to 'prompts de texto' for technical accuracy."
+    },
+    {
+      "issue": "Style and Fluency",
+      "correction": "Modify 'dos generaciones separadas por indicación' to 'dos generaciones distintas por cada prompt' for clarity."
+    },
+    {
+      "issue": "Consistency",
+      "correction": "Use 'prompt' consistently instead of switching between 'indicaciones' and 'prompts'."
+    },
+    {
+      "issue": "Accuracy and Style",
+      "correction": "Rewrite 'El sistema reemplaza automáticamente los nombres de los artistas con descripciones estilísticas pero a veces produce resultados que suenan inquietantemente similares a los artistas solicitados' to 'El sistema sustituye automáticamente los nombres de los artistas por descripciones de estilo, aunque a veces los resultados suenan sorprendentemente similares a los artistas solicitados.'"
+    },
+    {
+      "issue": "Fluency and Style",
+      "correction": "Change 'asignándolas a estrofas, coros o voces de fondo' to 'asignándolas a versos, coros o acompañamientos vocales'."
+    },
+    {
+      "issue": "Terminology and Accuracy",
+      "correction": "Adjust 'Suno permite a los usuarios generar 10 canciones diarias de forma gratuita o pagar para generar más' to 'Suno permite a los usuarios generar hasta 10 canciones diarias de forma gratuita o más mediante pago.'"
+    },
+    {
+      "issue": "Fluency",
+      "correction": "Rephrase 'El sistema se niega a generar música a partir de indicaciones que incluyan el nombre de un artista real' to 'El sistema rechaza prompts que incluyan nombres de artistas reales.'"
+    },
+    {
+      "issue": "General Proofreading",
+      "correction": "Review for grammatical errors, punctuation, and technical term consistency."
+    }
+  ]
+}
+
+Cómo funciona: Ambos servicios toman prompts de texto y generan producciones completas de banda con letras, vocales y solos instrumentales, dos generaciones distintas por cada prompt. Los usuarios pueden generar letras por encargo o subir sus propias palabras, y pueden descargar, compartir y/o publicar los resultados para que otros los escuchen. Los tableros de clasificación ordenan las salidas según las reproducciones y los me gusta.
+
+Fundado por exalumnos de la división DeepMind de Google, Udio permite a los usuarios registrados generar hasta 1,200 canciones mensuales de forma gratuita y espera ofrecer servicios pagos en una fecha futura no especificada. Los usuarios ingresan un prompt de texto y/o eligen etiquetas de estilo. El sistema sustituye automáticamente los nombres de los artistas por descripciones de estilo, aunque a veces los resultados suenan sorprendentemente similares a los artistas solicitados. Los usuarios pueden optar por generar una pista instrumental o añadir letras, asignándolas a versos, coros o acompañamientos vocales. Udio genera segmentos de audio de 33 segundos de duración, que los usuarios pueden extender, remezclar y modificar. La compañía no ha publicado información sobre la tecnología subyacente.
+Suno permite a los usuarios generar hasta 10 canciones diarias de forma gratuita o más mediante pago. Ingrese un prompt, y el sistema genera canciones completas de hasta 2 minutos de duración; alternativamente, los usuarios pueden especificar letras, estilo y título en prompts separados. El sistema rechaza prompts que incluyan nombres de artistas reales. Suno no ha divulgado información técnica, pero el año pasado lanzó un modelo de código abierto llamado Bark que convierte un prompt de texto en música sintética, habla y/o efectos de sonido.
+Detrás de la noticia: La mayoría de los generadores de texto a música anteriores estaban diseñados para producir composiciones instrumentales relativamente libres en lugar de canciones con estrofas, coros y vocales estructurados. Lanzado a principios de este mes, Stable Audio 2 genera pistas instrumentales de hasta tres minutos de duración que tienen principios, medios y finales distintos. Los usuarios también pueden subir pistas de audio y usar Stable Audio 2.0 para modificarlas.
+
+Sí, pero: Al igual que los generadores de texto a imagen del año pasado, los modelos actuales de texto a música ofrecen poca capacidad para dirigir su salida. No responden de manera consistente a la terminología musical básica como "tempo" y "armonía", y solicitar un estilo genérico como "pop" puede convocar una variedad de subgéneros de los últimos 50 años de música popular.
+
+Por qué es importante: Con la llegada de modelos de texto a música que producen canciones creíbles, la generación de audio parece preparada para un momento Midjourney, cuando el público se dé cuenta de que puede producir música personalizada al instante. Ya los sitios web de Udio y Suno están llenos de loas caprichosas a las mascotas y pasatiempos de los usuarios. La tecnología tiene implicaciones claras para los intérpretes y productores profesionales, quienes, lamentablemente, tienen pocas opciones más que adaptarse a la creciente automatización. Pero por ahora, los aficionados tienen nuevos juguetes divertidos con los que jugar.
+
+Estamos pensando: ¡Puedes bailar con estos algo-ritmos!ContractLaw incluye preguntas relacionadas con contratos. Se solicita a los modelos que recuperen partes de los contratos relevantes para términos específicos, editen extractos y determinen si estos cumplen con los estándares legales.
+CorpFin evalúa la precisión al responder preguntas de finanzas corporativas. Suministra a los modelos un acuerdo de crédito comercial público — términos de un préstamo comercial o una línea de crédito — y plantea preguntas que requieren extraer información y razonar sobre ella.
+TaxEval evalúa la precisión en indicaciones relacionadas con impuestos. La mitad de las preguntas evalúan habilidades como calcular el ingreso gravable, la tasa marginal y similares. La otra mitad cubre conocimientos como el impacto de diferentes métodos contables en los impuestos o cómo se aplican los impuestos a diversos tipos de activos.
+Vals AI también rastrea el rendimiento en LegalBench, un estándar abierto que evalúa el razonamiento legal.
+Resultados: Entre 15 modelos, GPT-4 y Claude 3 Opus dominaron las tablas de clasificación de Vals.AI a fecha de 11 de abril de 2024. GPT-4 lideró en CorpFin y TaxEval, respondiendo correctamente el 64,8 y el 54,5 por ciento de las preguntas, respectivamente. Claude 3 Opus superó por poco a GPT-4 en ContractLaw y LegalBench, alcanzando el 74,0 y el 77,7 por ciento, respectivamente. Claude 3 Sonnet, el modelo más pequeño, ocupó el tercer lugar en ContractLaw, CorpFin y TaxEval con 67,6, 61,4 y 37,1 por ciento. El Gemini Pro 1.0 de Google ocupó el tercer lugar en LegalBench con un 73,6 por ciento.
+
+Detrás de las noticias: Muchos profesionales en finanzas y derecho utilizan Modelos de Lenguaje de Gran Escala (LLM) en aplicaciones que van desde el procesamiento de documentos hasta la predicción de tasas de interés. Sin embargo, la salida de LLM en tales aplicaciones requiere supervisión. En 2023, un juez del estado de Nueva York reprendió a un abogado por presentar un informe generado por IA que hacía referencia a casos ficticios.
+
+Por qué es importante: Los estándares típicos de IA están diseñados para evaluar el conocimiento general y las habilidades cognitivas. Muchos desarrolladores desearían medir de manera más directa el rendimiento en contextos empresariales reales, donde puede entrar en juego el conocimiento especializado.
+
+Estamos pensando: Los estándares abiertos pueden beneficiarse del escrutinio público, y están disponibles para todos los desarrolladores. Sin embargo, pueden ser mal utilizados cuando los desarrolladores seleccionan los estándares en los que sus modelos se desempeñan especialmente bien. Además, pueden encontrar su camino en los conjuntos de entrenamiento, lo que resulta en comparaciones injustas. Las pruebas independientes en estándares propietarios son una forma de abordar estos problemas.
+
+NUEVO DE DEEPLEARNING.AI
+
+Únete a "Getting Started with Mistral" y accede a los modelos de código abierto y comerciales de Mistral AI a través de llamadas API. Aprende a seleccionar el modelo adecuado para tu caso de uso y practica con características como el modo JSON, llamadas a funciones y técnicas de solicitud efectivas. ¡Inscríbete gratis!
+
+INFORME DE PROGRESO DE IA: MANUFACTURA
+Los fabricantes están adoptando la IA incluso mientras luchan por encontrar el talento y los datos necesarios.
+
+Lo nuevo: El brazo de investigación de mercado de MIT Technology Review encuestó el uso de la IA por parte de los fabricantes en ingeniería, diseño, adquisiciones y producción. Todos los encuestados estaban al menos experimentando con la IA, y muchos esperan lanzar sus primeras implementaciones en el próximo año o dos. Microsoft patrocinó la investigación.
+
+Cómo funciona: Los autores entrevistaron a ejecutivos de 300 fabricantes en los sectores aeroespacial, automotriz, químico, electrónico y de equipos pesados. Todos estaban aplicando o considerando la aplicación de IA en el diseño de productos o las operaciones de fábrica.
+
+Los usos más comunes de la IA en producción involucraban diseñar productos, crear contenido como documentación técnica y construir chatbots. Los usos más comunes en las etapas anteriores eran la gestión del conocimiento y el control de calidad.
+El 35 por ciento de los encuestados había desplegado la IA en producción. Otro 37 por ciento estaba experimentando con la IA, mientras que el 27 por ciento estaba realizando investigaciones preliminares.
+El 45 por ciento de los encuestados en electrónica y el 39 por ciento en automoción habían desplegado la IA en producción. Las empresas más grandes tenían más probabilidades de haber desplegado la IA (el 77 por ciento de las empresas con ingresos superiores a 10 mil millones de dólares en comparación con el 4 por ciento de aquellas con ingresos inferiores a 500 millones de dólares). Las empresas más grandes también eran más propensas a prever aumentos en el gasto en IA en los próximos dos años.
+Al preguntarles cuáles eran los mayores desafíos para escalar los usos de la IA, los encuestados señalaron con más frecuencia la escasez de habilidades y talento. Al preguntarles sobre los desafíos que enfrentaba su empresa con respecto a los datos, señalaron el mantenimiento de la calidad de los datos, la integración de datos de diferentes partes de la organización y la gobernanza de los datos.
+Detrás de las noticias: Los fabricantes están utilizando la IA para ayudar a diseñar productos, inspeccionar visualmente los bienes y mantener el equipo. El campo ha atraído a grandes jugadores: el año pasado, Microsoft y Siemens lanzaron un piloto de Industrial Copilot, que permite a los usuarios interactuar en lenguaje natural con software que dirige las líneas de montaje.{
+  "suggestions": [
+    {
+      "issue": "Terminology Consistency",
+      "original": "Campo de Radiación Neuronal (NeRF)",
+      "suggestion": "Neural Radiance Field (NeRF) (Campo de Radiación Neuronal)"
+    },
+    {
+      "issue": "Technical Accuracy",
+      "original": "un modelo de difusión de video puede aprender a generar videos que orbiten alrededor de él",
+      "suggestion": "se pueden generar videos que orbiten alrededor de él mediante un modelo de difusión de video"
+    },
+    {
+      "issue": "Fluency and Style",
+      "original": "Los autores ajustaron un modelo preentrenado de Difusión de Video Estable, dado una imagen de un objeto, para generar un video orbital",
+      "suggestion": "Los autores ajustaron un modelo preentrenado de Difusión de Video Estable para generar un video orbital a partir de una imagen de un objeto"
+    },
+    {
+      "issue": "Terminology and Technical Detail",
+      "original": "Los autores renderizaron imágenes del modelo 3D de DMTet a lo largo de órbitas de cámara aleatorias",
+      "suggestion": "Los autores renderizaron imágenes del modelo 3D de DMTet desde órbitas de cámara aleatorias para refinar el modelo"
+    },
+    {
+      "issue": "Consistency and Clarity",
+      "original": "Puedes ver su resultado aquí",
+      "suggestion": "Puedes ver su resultado en el enlace proporcionado aquí"
+    },
+    {
+      "issue": "Technical Accuracy and Style",
+      "original": "Los modelos de difusión de video deben generar diferentes vistas del mismo objeto, por lo que requieren una mayor comprensión de los objetos 3D que los modelos de difusión de imagen",
+      "suggestion": "Los modelos de difusión de video, al tener que generar diferentes vistas del mismo objeto, requieren un entendimiento más profundo de los objetos 3D en comparación con los modelos de difusión de imagen"
+    },
+    {
+      "issue": "Fluency",
+      "original": "Estamos pensando: Construir modelos 3D solía ser difícil, pero con modelos como este, se está volviendo menos complicado",
+      "suggestion": "Reflexionamos: Aunque antes era difícil construir modelos 3D, con avances como este, el proceso se está simplificando"
+    }
+  ]
+}
+
+Por qué es importante: Los fabricantes quieren utilizar la IA, pero muchos enfrentan obstáculos de talento y datos. Esto representa oportunidades tanto para los practicantes en ciernes como para los fabricantes que carecen de infraestructura para recopilar y gestionar datos.
+
+Estamos pensando: Una clave para la implementación exitosa de la IA en la fabricación es adaptar los sistemas a las circunstancias únicas de cada instalación individual. Las tareas altamente heterogéneas, el equipo y el entorno en diferentes fábricas significan que un modelo único no sirve para todos. Los desarrolladores que puedan resolver este problema de larga cola podrán obtener recompensas.
+
+Un modelo 3D a partir de una imagen 2D
+La difusión de video proporciona una nueva base para generar modelos 3D.
+Novedades: Vikram Voleti, Chun-Han Yao, Mark Boss, Varun Jampani y colegas en Stability AI desarrollaron un método que genera un modelo 3D a partir de una sola imagen basado en el modelo de difusión de video de Stability. Puedes ver su resultado en el enlace proporcionado aquí.
+
+Perspectiva clave: El enfoque conocido como Neural Radiance Field (NeRF) (Campo de Radiación Neuronal) aprende a crear un modelo 3D a partir de imágenes del mismo objeto tomadas desde varios ángulos. Mediante un modelo de difusión de video, se pueden generar videos que orbiten alrededor de él. Los fotogramas de dichos videos orbitales proporcionan a NeRF la información que necesita para producir un modelo 3D.
+
+Cómo funciona: Para generar una imagen, los autores tomaron un paso antes y dos pasos durante la inferencia. Antes de la inferencia: Aprender a generar un video orbital. Durante la inferencia: (i) Entrenar un modelo NeRF en un video orbital. (ii) Mejorar el modelo 3D usando difusión siguiendo DreamFusion.
+
+Los autores ajustaron un modelo preentrenado de Difusión de Video Estable para generar un video orbital a partir de una imagen de un objeto. Ajustaron el modelo en vistas orbitales de objetos sintéticos en el conjunto de datos Objaverse, primero sin y luego con información sobre la órbita de la cámara. Llamaron al modelo ajustado Video Estable 3D (SV3D).
+En la inferencia, SV3D generó un video orbital a partir de una imagen, donde la órbita subía y bajaba periódicamente para asegurar que la parte superior e inferior del objeto fueran visibles. A partir de estas imágenes, los autores entrenaron un modelo NeRF Instant-NGP, que aprendió a representar el objeto como un modelo 3D y a generar imágenes desde nuevos ángulos de cámara basados en diferentes vistas del mismo objeto.
+Para mejorar el modelo 3D, los autores primero lo representaron usando DMTet en lugar de Instant-NGP. DMTet es un sistema de redes construido para refinar formas 3D a partir de nubes de puntos ásperas o modelos 3D de baja resolución. Los autores renderizaron imágenes del modelo 3D de DMTet desde órbitas de cámara aleatorias para refinar el modelo. Para cada imagen, los autores añadieron ruido a la representación de la imagen y lo eliminaron usando SV3D. DMTet aprendió a actualizar su modelo 3D para minimizar la diferencia entre la imagen renderizada y la versión actualizada de SV3D.
+Resultados: Los autores produjeron modelos 3D a partir de imágenes de 50 objetos en GSO, un conjunto de datos de objetos 3D de artículos domésticos escaneados. Compararon sus modelos 3D con los producidos por otros métodos, incluyendo EscherNet, un método que utiliza un modelo de difusión de imagen para generar imágenes de un objeto desde diferentes ángulos que se utilizan para entrenar un par de redes neuronales convencionales para producir un modelo 3D. Evaluados según la distancia de Chamfer, una medida de la distancia entre los puntos en los modelos 3D reales y generados (cuanto menor, mejor), su método logró .024, mientras que EscherNet logró .042.
+
+Por qué es importante: Los modelos de difusión de video, al tener que generar diferentes vistas del mismo objeto, requieren un entendimiento más profundo de los objetos 3D en comparación con los modelos de difusión de imagen.
+
+Reflexionamos: Aunque antes era difícil construir modelos 3D, con avances como este, el proceso se está simplificando.
