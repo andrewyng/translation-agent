@@ -87,12 +87,15 @@ def one_chunk_initial_translation(
 
     system_message = f"You are an expert linguist, specializing in translation from {source_lang} to {target_lang}."
 
-    translation_prompt = f""""This is an {source_lang} to {target_lang} translation, please provide the {target_lang} translation for this text. \
-Do not provide any explanations or text apart from the translation.
-{source_lang}: {source_text}
+    translation_prompt = f"""Your task is to provide a professional translation of a text from {source_lang} to {target_lang}.
 
-{target_lang}:\
-"""
+    Translate the text below, delimited by XML tags <SOURCE_TEXT> and </SOURCE_TEXT>, and output the translation.
+    Output only the translation and nothing else.
+
+    <SOURCE_TEXT>
+    {source_text}
+    </SOURCE_TEXT>
+    """
 
     prompt = translation_prompt.format(source_text=source_text)
 
@@ -138,14 +141,14 @@ The source text and initial translation, delimited by XML tags <SOURCE_TEXT></SO
 </TRANSLATION>
 
 When writing suggestions, pay attention to whether there are ways to improve the translation's \n\
-(i) accuracy (by correcting errors of mistranslation, omission, or untranslated text),\n\
+(i) accuracy (by correcting errors of addition, mistranslation, omission, or untranslated text),\n\
 (ii) fluency (by applying {target_lang} grammar, spelling and punctuation rules, and ensuring there are no unnecessary repetitions),\n\
 (iii) style (by ensuring the translations reflect the style of the source text and takes into account any cultural context),\n\
 (iv) terminology (by ensuring terminology use is consistent and reflects the source text domain; and by only ensuring you use equivalent idioms {target_lang}).\n\
 
 Write a list of specific, helpful and constructive suggestions for improving the translation.
 Each suggestion should address one specific part of the translation.
-Output only the suggestions and nothing else."""  # Output the list of suggestions in JSON, using the key "suggestions".
+Output only the suggestions and nothing else.""" 
 
     prompt = reflection_prompt.format(
         source_lang=source_lang,
@@ -179,12 +182,13 @@ def one_chunk_improve_translation(
         str: The improved translation based on the expert suggestions.
     """
 
-    system_message = f"You are an expert language translator, specializing in {source_lang} to {target_lang} translation."
+    system_message = f"You are an expert linguist, specializing in translation editing from {source_lang} to {target_lang}."
 
-    prompt = f"""Your task is to carefully read, then improve, a translation from {source_lang} to {target_lang}, taking into
-account a set of expert suggestions and constructive criticisms.
+    prompt = f"""Your task is to carefully read, then edit, a translation from {source_lang} to {target_lang}, taking into
+account a list of expert suggestions and constructive criticisms.
 
-The source text, initial translation, and expert suggestions, delimited by XML tags <SOURCE_TEXT></SOURCE_TEXT>, <TRANSLATION></TRANSLATION> and <EXPERT_SUGGESTIONS></EXPERT_SUGGESTIONS> are as follows:
+The source text, the initial translation, and the expert linguist suggestions are delimited by XML tags <SOURCE_TEXT></SOURCE_TEXT>, <TRANSLATION></TRANSLATION> and <EXPERT_SUGGESTIONS></EXPERT_SUGGESTIONS> \
+as follows:
 
 <SOURCE_TEXT>
 {source_text}
@@ -198,11 +202,11 @@ The source text, initial translation, and expert suggestions, delimited by XML t
 {reflection}
 </EXPERT_SUGGESTIONS>
 
-Please take into account the expert suggestions when rewriting the translations to improve it. Consider:
+Please take into account the expert suggestions when editing the translation. Edit the translation by ensuring: 
 
-(i) accuracy (by correcting errors of addition, mistranslation, omission, untranslated text),
-(ii) fluency (grammar, inconsistency, punctuation, register, spelling), \
-(iii) style (fix awkward wording),
+(i) accuracy (by correcting errors of addition, mistranslation, omission, or untranslated text),
+(ii) fluency (by applying {target_lang} grammar, spelling and punctuation rules and ensuring there are no unnecessary repetitions), \
+(iii) style (by ensuring the translations reflect the style of the source text)
 (iv) terminology (inappropriate for context, inconsistent use), or \
 (v) other errors.
 
