@@ -94,7 +94,7 @@ lines-after-imports = 2
 known-first-party = ["translation-agent"]
 
 [tool.ruff.lint.per-file-ignores]
-"__init__.py" = ["E402"]
+"**/__init__.py" = ["E402", "F401"]
 "**/{tests,docs,tools}/*" = ["E402"]
 
 
