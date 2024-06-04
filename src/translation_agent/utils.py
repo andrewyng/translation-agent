@@ -87,15 +87,11 @@ def one_chunk_initial_translation(
 
     system_message = f"You are an expert linguist, specializing in translation from {source_lang} to {target_lang}."
 
-    translation_prompt = f"""Your task is to provide a professional translation of a text from {source_lang} to {target_lang}.
+    translation_prompt = f"""This is an {source_lang} to {target_lang} translation, please provide the {target_lang} translation for this text. \
+Do not provide any explanations or text apart from the translation.
+{source_lang}: {source_text}
 
-    Translate the text below, delimited by XML tags <SOURCE_TEXT> and </SOURCE_TEXT>, and output the translation.
-    Output only the translation and nothing else.
-
-    <SOURCE_TEXT>
-    {source_text}
-    </SOURCE_TEXT>
-    """
+{target_lang}:"""
 
     prompt = translation_prompt.format(source_text=source_text)
 
@@ -148,7 +144,7 @@ When writing suggestions, pay attention to whether there are ways to improve the
 
 Write a list of specific, helpful and constructive suggestions for improving the translation.
 Each suggestion should address one specific part of the translation.
-Output only the suggestions and nothing else.""" 
+Output only the suggestions and nothing else."""
 
     prompt = reflection_prompt.format(
         source_lang=source_lang,
