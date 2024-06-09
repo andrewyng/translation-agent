@@ -56,7 +56,7 @@ for both commercial and non-commercial purposes.
 ## Ideas for extensions 
 
 Here’re ideas we haven’t had time to experiment with but that we hope the open-source community will:
-Try other LLMs. We prototyped this primarily using gpt-4-turbo. We would love for others to experiment with other LLMs and see if some do better than others for particular language pairs. 
+- **Try other LLMs.** We prototyped this primarily using gpt-4-turbo. We would love for others to experiment with other LLMs as well as other hyperparameter choices and see if some do better than others for particular language pairs. 
 - **Glossary Creation.** What’s the best way to efficiently build a glossary -- perhaps using an LLM -- of the most important terms that we want translated consistently? For example, many businesses use specialized terms that are not widely used on the internet and that LLMs thus don’t know about, and there are also many terms that can be translated in multiple ways; for example,”open source” in Spanish can be “Código abierto” or “Fuente abierta”; both are fine, but it’d better to pick one and stick with it for a single document. 
 - **Glossary Usage and Implementation.** Given a glossary, what’s the best way to include it in the prompt? 
 - **Evaluations on different languages.** How does its performance vary in different languages? Are there changes that make it work better for particular source or target languages? (Note that for very high levels of performance, which MT systems are approaching, we’re not sure if BLEU is a great metric.) Also, its performance on lower resource languages needs further study.  
