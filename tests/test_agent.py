@@ -198,12 +198,12 @@ as follows:
 {example_data["reflection"]}
 </EXPERT_SUGGESTIONS>
 
-Please take into account the expert suggestions when editing the translation. Edit the translation by ensuring: 
+Please take into account the expert suggestions when editing the translation. Edit the translation by ensuring:
 
 (i) accuracy (by correcting errors of addition, mistranslation, omission, or untranslated text),
 (ii) fluency (by applying Spanish grammar, spelling and punctuation rules and ensuring there are no unnecessary repetitions), \
 (iii) style (by ensuring the translations reflect the style of the source text)
-(iv) terminology (inappropriate for context, inconsistent use), or \
+(iv) terminology (inappropriate for context, inconsistent use), or
 (v) other errors.
 
 Output only the new translation and nothing else."""
