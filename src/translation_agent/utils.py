@@ -21,7 +21,7 @@ MAX_TOKENS_PER_CHUNK = (
 def get_completion(
     prompt: str,
     system_message: str = "You are a helpful assistant.",
-    model: str = "gpt-4-turbo",  # "gpt-4o",
+    model: str = "gpt-4-turbo",
     temperature: float = 0.3,
     json_mode: bool = False,
 ) -> Union[str, dict]:
@@ -33,9 +33,9 @@ def get_completion(
         system_message (str, optional): The system message to set the context for the assistant.
             Defaults to "You are a helpful assistant.".
         model (str, optional): The name of the OpenAI model to use for generating the completion.
-            Defaults to "gpt-4o".
+            Defaults to "gpt-4-turbo".
         temperature (float, optional): The sampling temperature for controlling the randomness of the generated text.
-            Defaults to 0.
+            Defaults to 0.3.
         json_mode (bool, optional): Whether to return the response in JSON format.
             Defaults to False.
 
@@ -105,7 +105,7 @@ def one_chunk_reflect_on_translation(
     target_lang: str,
     source_text: str,
     translation_1: str,
-    country: str,
+    country: str = "",
 ) -> str:
     """
     Use an LLM to reflect on the translation, treating the entire text as one chunk.
@@ -115,6 +115,7 @@ def one_chunk_reflect_on_translation(
         target_lang (str): The target language of the translation.
         source_text (str): The original text in the source language.
         translation_1 (str): The initial translation of the source text.
+        country (str): Country specified for target language.
 
     Returns:
         str: The LLM's reflection on the translation, providing constructive criticism and suggestions for improvement.
@@ -123,8 +124,32 @@ def one_chunk_reflect_on_translation(
     system_message = f"You are an expert linguist specializing in translation from {source_lang} to {target_lang}. \
 You will be provided with a source text and its translation and your goal is to improve the translation."
 
-    reflection_prompt = f"""Your task is to carefully read a source text and a translation from {source_lang} to {target_lang}, and then give constructive criticism and helpful suggestions to improve the translation. \
+    if country != "":
+        reflection_prompt = f"""Your task is to carefully read a source text and a translation from {source_lang} to {target_lang}, and then give constructive criticism and helpful suggestions to improve the translation. \
 The final style and tone of the translation should match the style of {target_lang} colloquially spoken in {country}.
+
+The source text and initial translation, delimited by XML tags <SOURCE_TEXT></SOURCE_TEXT> and <TRANSLATION></TRANSLATION>, are as follows:
+
+<SOURCE_TEXT>
+{source_text}
+</SOURCE_TEXT>
+
+<TRANSLATION>
+{translation_1}
+</TRANSLATION>
+
+When writing suggestions, pay attention to whether there are ways to improve the translation's \n\
+(i) accuracy (by correcting errors of addition, mistranslation, omission, or untranslated text),\n\
+(ii) fluency (by applying {target_lang} grammar, spelling and punctuation rules, and ensuring there are no unnecessary repetitions),\n\
+(iii) style (by ensuring the translations reflect the style of the source text and takes into account any cultural context),\n\
+(iv) terminology (by ensuring terminology use is consistent and reflects the source text domain; and by only ensuring you use equivalent idioms {target_lang}).\n\
+
+Write a list of specific, helpful and constructive suggestions for improving the translation.
+Each suggestion should address one specific part of the translation.
+Output only the suggestions and nothing else."""
+
+    else:
+        reflection_prompt = f"""Your task is to carefully read a source text and a translation from {source_lang} to {target_lang}, and then give constructive criticism and helpful suggestions to improve the translation. \
 
 The source text and initial translation, delimited by XML tags <SOURCE_TEXT></SOURCE_TEXT> and <TRANSLATION></TRANSLATION>, are as follows:
 
@@ -198,12 +223,12 @@ as follows:
 {reflection}
 </EXPERT_SUGGESTIONS>
 
-Please take into account the expert suggestions when editing the translation. Edit the translation by ensuring: 
+Please take into account the expert suggestions when editing the translation. Edit the translation by ensuring:
 
 (i) accuracy (by correcting errors of addition, mistranslation, omission, or untranslated text),
 (ii) fluency (by applying {target_lang} grammar, spelling and punctuation rules and ensuring there are no unnecessary repetitions), \
 (iii) style (by ensuring the translations reflect the style of the source text)
-(iv) terminology (inappropriate for context, inconsistent use), or \
+(iv) terminology (inappropriate for context, inconsistent use), or
 (v) other errors.
 
 Output only the new translation and nothing else."""
@@ -214,7 +239,7 @@ Output only the new translation and nothing else."""
 
 
 def one_chunk_translate_text(
-    source_lang: str, target_lang: str, source_text: str, country: str
+    source_lang: str, target_lang: str, source_text: str, country: str = ""
 ) -> str:
     """
     Translate a single chunk of text from the source language to the target language.
@@ -227,7 +252,7 @@ def one_chunk_translate_text(
         source_lang (str): The source language of the text.
         target_lang (str): The target language for the translation.
         source_text (str): The text to be translated.
-
+        country (str): Country specified for target language.
     Returns:
         str: The improved translation of the source text.
     """
@@ -287,7 +312,7 @@ def multichunk_initial_translation(
         List[str]: A list of translated text chunks.
     """
 
-    system_message = f"You are an expert language translator, specializing in {source_lang} to {target_lang} translation."
+    system_message = f"You are an expert linguist, specializing in translation from {source_lang} to {target_lang}."
 
     translation_prompt = """Your task is provide a professional translation from {source_lang} to {target_lang} of PART of a text.
 
@@ -336,6 +361,7 @@ def multichunk_reflect_on_translation(
     target_lang: str,
     source_text_chunks: List[str],
     translation_1_chunks: List[str],
+    country: str = "",
 ) -> List[str]:
     """
     Provides constructive criticism and suggestions for improving a partial translation.
@@ -345,14 +371,18 @@ def multichunk_reflect_on_translation(
         target_lang (str): The target language of the translation.
         source_text_chunks (List[str]): The source text divided into chunks.
         translation_1_chunks (List[str]): The translated chunks corresponding to the source text chunks.
+        country (str): Country specified for target language.
 
     Returns:
         List[str]: A list of reflections containing suggestions for improving each translated chunk.
     """
 
-    system_message = f"You are an expert language translator and mentor, specializing in {source_lang} to {target_lang} translation."
+    system_message = f"You are an expert linguist specializing in translation from {source_lang} to {target_lang}. \
+You will be provided with a source text and its translation and your goal is to improve the translation."
 
-    reflection_prompt = """Your task is to carefully read a source text and part of a translation of that text from {source_lang} to {target_lang}, and then give constructive criticism and helpful suggestions for improving the translation.
+    if country != "":
+        reflection_prompt = """Your task is to carefully read a source text and part of a translation of that text from {source_lang} to {target_lang}, and then give constructive criticism and helpful suggestions for improving the translation.
+The final style and tone of the translation should match the style of {target_lang} colloquially spoken in {country}.
 
 The source text is below, delimited by XML tags <SOURCE_TEXT> and </SOURCE_TEXT>, and the part that has been translated
 is delimited by <TRANSLATE_THIS> and </TRANSLATE_THIS> within the source text. You can use the rest of the source text
@@ -372,15 +402,46 @@ The translation of the indicated part, delimited below by <TRANSLATION> and </TR
 {translation_1_chunk}
 </TRANSLATION>
 
-When writing suggestions, pay attention to whether there are ways to improve the translation's:
-(i) accuracy (by correcting errors of addition, mistranslation, omission, untranslated text),
-(ii) fluency (grammar, inconsistency, punctuation, register, spelling),
-(iii) style (fix awkward wording),
-(iv) terminology (inappropriate for context, inconsistent use), or
-(v) other errors.
+When writing suggestions, pay attention to whether there are ways to improve the translation's:\n\
+(i) accuracy (by correcting errors of addition, mistranslation, omission, or untranslated text),\n\
+(ii) fluency (by applying {target_lang} grammar, spelling and punctuation rules, and ensuring there are no unnecessary repetitions),\n\
+(iii) style (by ensuring the translations reflect the style of the source text and takes into account any cultural context),\n\
+(iv) terminology (by ensuring terminology use is consistent and reflects the source text domain; and by only ensuring you use equivalent idioms {target_lang}).\n\
 
 Write a list of specific, helpful and constructive suggestions for improving the translation.
-Each suggestion should address one specific part of the translation."""
+Each suggestion should address one specific part of the translation.
+Output only the suggestions and nothing else."""
+
+    else:
+        reflection_prompt = """Your task is to carefully read a source text and part of a translation of that text from {source_lang} to {target_lang}, and then give constructive criticism and helpful suggestions for improving the translation.
+
+The source text is below, delimited by XML tags <SOURCE_TEXT> and </SOURCE_TEXT>, and the part that has been translated
+is delimited by <TRANSLATE_THIS> and </TRANSLATE_THIS> within the source text. You can use the rest of the source text
+as context for critiquing the translated part.
+
+<SOURCE_TEXT>
+{tagged_text}
+</SOURCE_TEXT>
+
+To reiterate, only part of the text is being translated, shown here again between <TRANSLATE_THIS> and </TRANSLATE_THIS>:
+<TRANSLATE_THIS>
+{chunk_to_translate}
+</TRANSLATE_THIS>
+
+The translation of the indicated part, delimited below by <TRANSLATION> and </TRANSLATION>, is as follows:
+<TRANSLATION>
+{translation_1_chunk}
+</TRANSLATION>
+
+When writing suggestions, pay attention to whether there are ways to improve the translation's:\n\
+(i) accuracy (by correcting errors of addition, mistranslation, omission, or untranslated text),\n\
+(ii) fluency (by applying {target_lang} grammar, spelling and punctuation rules, and ensuring there are no unnecessary repetitions),\n\
+(iii) style (by ensuring the translations reflect the style of the source text and takes into account any cultural context),\n\
+(iv) terminology (by ensuring terminology use is consistent and reflects the source text domain; and by only ensuring you use equivalent idioms {target_lang}).\n\
+
+Write a list of specific, helpful and constructive suggestions for improving the translation.
+Each suggestion should address one specific part of the translation.
+Output only the suggestions and nothing else."""
 
     reflection_chunks = []
     for i in range(len(source_text_chunks)):
@@ -392,14 +453,23 @@ Each suggestion should address one specific part of the translation."""
             + "</TRANSLATE_THIS>"
             + "".join(source_text_chunks[i + 1 :])
         )
-
-        prompt = reflection_prompt.format(
-            source_lang=source_lang,
-            target_lang=target_lang,
-            tagged_text=tagged_text,
-            chunk_to_translate=source_text_chunks[i],
-            translation_1_chunk=translation_1_chunks[i],
-        )
+        if country != "":
+            prompt = reflection_prompt.format(
+                source_lang=source_lang,
+                target_lang=target_lang,
+                tagged_text=tagged_text,
+                chunk_to_translate=source_text_chunks[i],
+                translation_1_chunk=translation_1_chunks[i],
+                country=country,
+            )
+        else:
+            prompt = reflection_prompt.format(
+                source_lang=source_lang,
+                target_lang=target_lang,
+                tagged_text=tagged_text,
+                chunk_to_translate=source_text_chunks[i],
+                translation_1_chunk=translation_1_chunks[i],
+            )
 
         reflection = get_completion(prompt, system_message=system_message)
         reflection_chunks.append(reflection)
@@ -428,7 +498,7 @@ def multichunk_improve_translation(
         List[str]: The improved translation of each chunk.
     """
 
-    system_message = f"You are an expert language translator, specializing in {source_lang} to {target_lang} translation."
+    system_message = f"You are an expert linguist, specializing in translation editing from {source_lang} to {target_lang}."
 
     improvement_prompt = """Your task is to carefully read, then improve, a translation from {source_lang} to {target_lang}, taking into
 account a set of expert suggestions and constructive critisms. Below, the source text, initial translation, and expert suggestions are provided.
@@ -458,13 +528,14 @@ The expert translations of the indicated part, delimited below by <EXPERT_SUGGES
 
 Taking into account the expert suggestions rewrite the translation to improve it, paying attention
 to whether there are ways to improve the translation's
-(i) accuracy (by correcting errors of addition, mistranslation, omission, untranslated text),
-(ii) fluency (grammar, inconsistency, punctuation, register, spelling),
-(iii) style (fix awkward wording),
-(iv) terminology (inappropriate for context, inconsistent use), or
-(v) other errors. Output the list of suggestions in JSON, using the key "suggestions".
 
-Output the new translation of the indicated part, and nothing else."""
+(i) accuracy (by correcting errors of addition, mistranslation, omission, or untranslated text),
+(ii) fluency (by applying {target_lang} grammar, spelling and punctuation rules and ensuring there are no unnecessary repetitions), \
+(iii) style (by ensuring the translations reflect the style of the source text)
+(iv) terminology (inappropriate for context, inconsistent use), or
+(v) other errors.
+
+Output only the new translation of the indicated part and nothing else."""
 
     translation_2_chunks = []
     for i in range(len(source_text_chunks)):
@@ -492,7 +563,9 @@ Output the new translation of the indicated part, and nothing else."""
     return translation_2_chunks
 
 
-def multichunk_translation(source_lang, target_lang, source_text_chunks):
+def multichunk_translation(
+    source_lang, target_lang, source_text_chunks, country: str = ""
+):
     """
     Improves the translation of multiple text chunks based on the initial translation and reflection.
 
@@ -502,7 +575,7 @@ def multichunk_translation(source_lang, target_lang, source_text_chunks):
         source_text_chunks (List[str]): The list of source text chunks to be translated.
         translation_1_chunks (List[str]): The list of initial translations for each source text chunk.
         reflection_chunks (List[str]): The list of reflections on the initial translations.
-
+        country (str): Country specified for target language
     Returns:
         List[str]: The list of improved translations for each source text chunk.
     """
@@ -512,7 +585,11 @@ def multichunk_translation(source_lang, target_lang, source_text_chunks):
     )
 
     reflection_chunks = multichunk_reflect_on_translation(
-        source_lang, target_lang, source_text_chunks, translation_1_chunks
+        source_lang,
+        target_lang,
+        source_text_chunks,
+        translation_1_chunks,
+        country,
     )
 
     translation_2_chunks = multichunk_improve_translation(
@@ -607,7 +684,7 @@ def translate(
         source_text_chunks = text_splitter.split_text(source_text)
 
         translation_2_chunks = multichunk_translation(
-            source_lang, target_lang, source_text_chunks
+            source_lang, target_lang, source_text_chunks, country
         )
 
         return "".join(translation_2_chunks)
