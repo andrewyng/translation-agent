@@ -178,7 +178,6 @@ Output only the suggestions and nothing else."""
         translation_1=translation_1,
     )
     reflection = get_completion(prompt, system_message=system_message)
-    print("Reflection:", reflection)
     return reflection
 
 
@@ -259,8 +258,6 @@ def one_chunk_translate_text(
     translation_1 = one_chunk_initial_translation(
         source_lang, target_lang, source_text
     )
-
-    ic(translation_1)
 
     reflection = one_chunk_reflect_on_translation(
         source_lang, target_lang, source_text, translation_1, country
