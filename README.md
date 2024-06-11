@@ -66,8 +66,8 @@ Here are ideas we haven’t had time to experiment with but that we hope the ope
 ## Related work 
 
 A few academic research groups are also starting to look at LLM-based and agentic translation. We think it’s early days for this field!
-- *ChatGPT MT: Competitive for High- (but not Low-) Resource Languages*, Robinson et al., https://arxiv.org/pdf/2309.07423
-- *Beyond Human Translation: Harnessing Multi-Agent Collaboration for Translating Ultra-Long Literary Texts*, Wu et al.,  https://arxiv.org/pdf/2405.11804
-- *How to Design Translation Prompts for ChatGPT: An Empirical Study*, Gao et al., https://arxiv.org/pdf/2304.02182v2
+- *ChatGPT MT: Competitive for High- (but not Low-) Resource Languages*, Robinson et al. (2023), https://arxiv.org/pdf/2309.07423
+- *How to Design Translation Prompts for ChatGPT: An Empirical Study*, Gao et al. (2023), https://arxiv.org/pdf/2304.02182v2
+- *Beyond Human Translation: Harnessing Multi-Agent Collaboration for Translating Ultra-Long Literary Texts*, Wu et al. (2024),  https://arxiv.org/pdf/2405.11804
 
 
