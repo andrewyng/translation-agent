@@ -26,7 +26,7 @@ Comments and suggestions for how to improve this are also very welcome!
 To get started with `translation-agent`, follow these steps:
 
 ### Installation:
-- The Poetry package manager is required for installation. [Poetry Installation](https://python-poetry.org/docs/#installation) \n Depending on your environment, this might work:
+- The Poetry package manager is required for installation. [Poetry Installation](https://python-poetry.org/docs/#installation) Depending on your environment, this might work:
 
 ```bash
 pip install poetry 
