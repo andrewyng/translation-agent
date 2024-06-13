@@ -16,7 +16,7 @@ if __name__ == "__main__":
     print(f"Source text:\n\n{source_text}\n------------\n")
 
     translation = ta.translate(
-        model_name="gpt-4",
+        model_name="gpt-3.5-turbo",
         source_lang=source_lang,
         target_lang=target_lang,
         source_text=source_text,
