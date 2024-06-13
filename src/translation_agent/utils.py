@@ -647,6 +647,7 @@ def translate(
     source_text,
     country,
     max_tokens=MAX_TOKENS_PER_CHUNK,
+    model_name="gpt-4",
 ):
     """Translate the source_text from source_lang to target_lang."""
 
@@ -673,7 +674,7 @@ def translate(
         ic(token_size)
 
         text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
-            model_name="gpt-4",
+            model_name=model_name,
             chunk_size=token_size,
             chunk_overlap=0,
         )

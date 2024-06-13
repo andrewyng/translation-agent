@@ -2,7 +2,6 @@ import os
 
 import translation_agent as ta
 
-
 if __name__ == "__main__":
     source_lang, target_lang, country = "English", "Spanish", "Mexico"
 
@@ -17,6 +16,7 @@ if __name__ == "__main__":
     print(f"Source text:\n\n{source_text}\n------------\n")
 
     translation = ta.translate(
+        model_name="gpt-4",
         source_lang=source_lang,
         target_lang=target_lang,
         source_text=source_text,
