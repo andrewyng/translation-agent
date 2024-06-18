@@ -10,18 +10,23 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 
 load_dotenv()  # read local .env file
-client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+client = openai.OpenAI(
+    api_key=os.getenv("OPENAI_API_KEY"),
+    base_url=os.getenv("OPENAI_BASE_URL"),
+)
 
 MAX_TOKENS_PER_CHUNK = (
-    1000  # if text is more than this many tokens, we'll break it up into
+    int(os.getenv("MAX_TOKENS_PER_CHUNK"))  # if text is more than this many tokens, we'll break it up into
 )
+DEFAULT_MODEL = os.getenv("DEFAULT_MODEL")
+DEFAULT_CHUNK_MODEL = os.getenv("DEFAULT_CHUNK_MODEL")
 # discrete chunks to translate one chunk at a time
 
 
 def get_completion(
     prompt: str,
+    model: str,
     system_message: str = "You are a helpful assistant.",
-    model: str = "gpt-4-turbo",
     temperature: float = 0.3,
     json_mode: bool = False,
 ) -> Union[str, dict]:
@@ -32,8 +37,7 @@ def get_completion(
         prompt (str): The user's prompt or query.
         system_message (str, optional): The system message to set the context for the assistant.
             Defaults to "You are a helpful assistant.".
-        model (str, optional): The name of the OpenAI model to use for generating the completion.
-            Defaults to "gpt-4-turbo".
+        model (str): The name of the OpenAI model to use for generating the completion.
         temperature (float, optional): The sampling temperature for controlling the randomness of the generated text.
             Defaults to 0.3.
         json_mode (bool, optional): Whether to return the response in JSON format.
@@ -71,7 +75,7 @@ def get_completion(
 
 
 def one_chunk_initial_translation(
-    source_lang: str, target_lang: str, source_text: str
+    source_lang: str, target_lang: str, source_text: str, model: str
 ) -> str:
     """
     Translate the entire text as one chunk using an LLM.
@@ -80,7 +84,7 @@ def one_chunk_initial_translation(
         source_lang (str): The source language of the text.
         target_lang (str): The target language for translation.
         source_text (str): The text to be translated.
-
+        model (str): The name of the OpenAI model to use for generating the completion.
     Returns:
         str: The translated text.
     """
@@ -95,7 +99,7 @@ Do not provide any explanations or text apart from the translation.
 
     prompt = translation_prompt.format(source_text=source_text)
 
-    translation = get_completion(prompt, system_message=system_message)
+    translation = get_completion(prompt, model=model, system_message=system_message)
 
     return translation
 
@@ -105,6 +109,7 @@ def one_chunk_reflect_on_translation(
     target_lang: str,
     source_text: str,
     translation_1: str,
+    model: str,
     country: str = "",
 ) -> str:
     """
@@ -115,6 +120,7 @@ def one_chunk_reflect_on_translation(
         target_lang (str): The target language of the translation.
         source_text (str): The original text in the source language.
         translation_1 (str): The initial translation of the source text.
+        model (str): The name of the OpenAI model to use for generating the completion.
         country (str): Country specified for target language.
 
     Returns:
@@ -177,7 +183,7 @@ Output only the suggestions and nothing else."""
         source_text=source_text,
         translation_1=translation_1,
     )
-    reflection = get_completion(prompt, system_message=system_message)
+    reflection = get_completion(prompt, model=model, system_message=system_message)
     return reflection
 
 
@@ -187,6 +193,7 @@ def one_chunk_improve_translation(
     source_text: str,
     translation_1: str,
     reflection: str,
+    model: str,
 ) -> str:
     """
     Use the reflection to improve the translation, treating the entire text as one chunk.
@@ -197,6 +204,7 @@ def one_chunk_improve_translation(
         source_text (str): The original text in the source language.
         translation_1 (str): The initial translation of the source text.
         reflection (str): Expert suggestions and constructive criticism for improving the translation.
+        model (str): The name of the OpenAI model to use for generating the completion.
 
     Returns:
         str: The improved translation based on the expert suggestions.
@@ -232,13 +240,13 @@ Please take into account the expert suggestions when editing the translation. Ed
 
 Output only the new translation and nothing else."""
 
-    translation_2 = get_completion(prompt, system_message)
+    translation_2 = get_completion(prompt, model=model, system_message=system_message)
 
     return translation_2
 
 
 def one_chunk_translate_text(
-    source_lang: str, target_lang: str, source_text: str, country: str = ""
+    source_lang: str, target_lang: str, source_text: str, model: str, country: str = ""
 ) -> str:
     """
     Translate a single chunk of text from the source language to the target language.
@@ -251,19 +259,20 @@ def one_chunk_translate_text(
         source_lang (str): The source language of the text.
         target_lang (str): The target language for the translation.
         source_text (str): The text to be translated.
+        model (str): The name of the OpenAI model to use for generating the completion.
         country (str): Country specified for target language.
     Returns:
         str: The improved translation of the source text.
     """
     translation_1 = one_chunk_initial_translation(
-        source_lang, target_lang, source_text
+        source_lang, target_lang, source_text, model
     )
 
     reflection = one_chunk_reflect_on_translation(
-        source_lang, target_lang, source_text, translation_1, country
+        source_lang, target_lang, source_text, translation_1, model, country
     )
     translation_2 = one_chunk_improve_translation(
-        source_lang, target_lang, source_text, translation_1, reflection
+        source_lang, target_lang, source_text, translation_1, reflection, model
     )
 
     return translation_2
@@ -295,7 +304,7 @@ def num_tokens_in_string(
 
 
 def multichunk_initial_translation(
-    source_lang: str, target_lang: str, source_text_chunks: List[str]
+    source_lang: str, target_lang: str, source_text_chunks: List[str], model: str
 ) -> List[str]:
     """
     Translate a text in multiple chunks from the source language to the target language.
@@ -304,6 +313,7 @@ def multichunk_initial_translation(
         source_lang (str): The source language of the text.
         target_lang (str): The target language for translation.
         source_text_chunks (List[str]): A list of text chunks to be translated.
+        model (str): The name of the OpenAI model to use for generating the completion.
 
     Returns:
         List[str]: A list of translated text chunks.
@@ -347,7 +357,7 @@ Output only the translation of the portion you are asked to translate, and nothi
             chunk_to_translate=source_text_chunks[i],
         )
 
-        translation = get_completion(prompt, system_message=system_message)
+        translation = get_completion(prompt, model=model, system_message=system_message)
         translation_chunks.append(translation)
 
     return translation_chunks
@@ -358,6 +368,7 @@ def multichunk_reflect_on_translation(
     target_lang: str,
     source_text_chunks: List[str],
     translation_1_chunks: List[str],
+    model: str,
     country: str = "",
 ) -> List[str]:
     """
@@ -368,6 +379,7 @@ def multichunk_reflect_on_translation(
         target_lang (str): The target language of the translation.
         source_text_chunks (List[str]): The source text divided into chunks.
         translation_1_chunks (List[str]): The translated chunks corresponding to the source text chunks.
+        model (str): The name of the OpenAI model to use for generating the completion.
         country (str): Country specified for target language.
 
     Returns:
@@ -468,7 +480,7 @@ Output only the suggestions and nothing else."""
                 translation_1_chunk=translation_1_chunks[i],
             )
 
-        reflection = get_completion(prompt, system_message=system_message)
+        reflection = get_completion(prompt, model=model, system_message=system_message)
         reflection_chunks.append(reflection)
 
     return reflection_chunks
@@ -480,6 +492,7 @@ def multichunk_improve_translation(
     source_text_chunks: List[str],
     translation_1_chunks: List[str],
     reflection_chunks: List[str],
+    model: str, 
 ) -> List[str]:
     """
     Improves the translation of a text from source language to target language by considering expert suggestions.
@@ -490,7 +503,7 @@ def multichunk_improve_translation(
         source_text_chunks (List[str]): The source text divided into chunks.
         translation_1_chunks (List[str]): The initial translation of each chunk.
         reflection_chunks (List[str]): Expert suggestions for improving each translated chunk.
-
+        model (str): The name of the OpenAI model to use for generating the completion.
     Returns:
         List[str]: The improved translation of each chunk.
     """
@@ -554,14 +567,14 @@ Output only the new translation of the indicated part and nothing else."""
             reflection_chunk=reflection_chunks[i],
         )
 
-        translation_2 = get_completion(prompt, system_message=system_message)
+        translation_2 = get_completion(prompt, model=model, system_message=system_message)
         translation_2_chunks.append(translation_2)
 
     return translation_2_chunks
 
 
 def multichunk_translation(
-    source_lang, target_lang, source_text_chunks, country: str = ""
+    source_lang, target_lang, source_text_chunks, model, country: str = ""
 ):
     """
     Improves the translation of multiple text chunks based on the initial translation and reflection.
@@ -570,15 +583,14 @@ def multichunk_translation(
         source_lang (str): The source language of the text chunks.
         target_lang (str): The target language for translation.
         source_text_chunks (List[str]): The list of source text chunks to be translated.
-        translation_1_chunks (List[str]): The list of initial translations for each source text chunk.
-        reflection_chunks (List[str]): The list of reflections on the initial translations.
+        model (str): The name of the OpenAI model to use for generating the completion.
         country (str): Country specified for target language
     Returns:
         List[str]: The list of improved translations for each source text chunk.
     """
 
     translation_1_chunks = multichunk_initial_translation(
-        source_lang, target_lang, source_text_chunks
+        source_lang, target_lang, source_text_chunks, model
     )
 
     reflection_chunks = multichunk_reflect_on_translation(
@@ -586,6 +598,7 @@ def multichunk_translation(
         target_lang,
         source_text_chunks,
         translation_1_chunks,
+        model,
         country,
     )
 
@@ -595,6 +608,7 @@ def multichunk_translation(
         source_text_chunks,
         translation_1_chunks,
         reflection_chunks,
+        model
     )
 
     return translation_2_chunks
@@ -646,6 +660,8 @@ def translate(
     target_lang,
     source_text,
     country,
+    model=DEFAULT_MODEL,
+    chunk_model=DEFAULT_CHUNK_MODEL,
     max_tokens=MAX_TOKENS_PER_CHUNK,
 ):
     """Translate the source_text from source_lang to target_lang."""
@@ -658,7 +674,7 @@ def translate(
         ic("Translating text as single chunk")
 
         final_translation = one_chunk_translate_text(
-            source_lang, target_lang, source_text, country
+            source_lang, target_lang, source_text, model, country
         )
 
         return final_translation
@@ -673,7 +689,7 @@ def translate(
         ic(token_size)
 
         text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
-            model_name="gpt-4",
+            model_name=chunk_model,
             chunk_size=token_size,
             chunk_overlap=0,
         )
@@ -681,7 +697,7 @@ def translate(
         source_text_chunks = text_splitter.split_text(source_text)
 
         translation_2_chunks = multichunk_translation(
-            source_lang, target_lang, source_text_chunks, country
+            source_lang, target_lang, source_text_chunks, model, country
         )
 
         return "".join(translation_2_chunks)

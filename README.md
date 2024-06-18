@@ -25,28 +25,80 @@ Comments and suggestions for how to improve this are very welcome!
 
 To get started with `translation-agent`, follow these steps:
 
-### Installation:
+### Installation with Source Code:
 - The Poetry package manager is required for installation. [Poetry Installation](https://python-poetry.org/docs/#installation) Depending on your environment, this might work:
 
 ```bash
 pip install poetry 
 ```
 
-- A .env file with a OPENAI_API_KEY is required to run the workflow. See the .env.sample file as an example.
+- **A .env file with a OPENAI_API_KEY is required to run the workflow. See the .env.sample file as an example.**
 ```bash
 git clone https://github.com/andrewyng/translation-agent.git
 cd translation-agent
 poetry install
 poetry shell # activates virtual environment
 ```
+
+### Installation With Docker
+- build docker image
+```bash
+git clone https://github.com/andrewyng/translation-agent.git
+cd translation-agent
+docker build . -t translation-agent
+```
+
+- **A .env file with a OPENAI_API_KEY is required to run the workflow. See the .env.sample file as an example.**
+
+- run with docker
+```bash
+docker run -d -p 8000:8000 \
+    --restart always \
+    -v ${PWD}/.env:/app/.env \
+    --name translation-agent \
+    translation-agent
+```
+
+
 ### Usage:
 
 ```python
 import translation_agent as ta
 source_lang, target_lang, country = "English", "Spanish", "Mexico"
+...
 translation = ta.translate(source_lang, target_lang, source_text, country)
 ```
 See examples/example_script.py for an example script to try out.
+
+### API Usage
+
+- run api server
+```bash
+python3 -m translation_agent.web_api --port 8000
+```
+
+- request api
+```python
+import json
+import requests
+...
+source_lang, target_lang, country = "English", "Spanish", "Mexico"
+url = "http://localhost:8000/translate/"
+data = {
+    "source_lang": source_lang,
+    "target_lang": target_lang,
+    "source_text": source_text,
+    "country": country,
+    # "model": "gpt-4-turbo",   # option params, you can change it to other model if you like.
+    # "chunk_model": "gpt4", # option params
+    # "max_tokens": 1000 # option params
+}
+res = requests.post(url, data=json.dumps(data))
+if res.status_code == 200:
+    translation = res.text
+    print(f"Translation:\n\n{translation}")
+```
+See examples/example_api_script.py for an example script to try out.
 
 ## License
 
