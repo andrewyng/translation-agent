@@ -17,20 +17,24 @@ from translation_agent.utils import one_chunk_translate_text
 
 load_dotenv()
 
-client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+client = openai.OpenAI(
+    api_key=os.getenv("OPENAI_API_KEY"),
+    base_url=os.getenv("OPENAI_BASE_URL"),
+)
+DEFAULT_MODEL = os.getenv("DEFAULT_MODEL")
 
 
 def test_get_completion_json_mode_api_call():
     # Set up the test data
     prompt = "What is the capital of France in json?"
     system_message = "You are a helpful assistant."
-    model = "gpt-4-turbo"
+    model = DEFAULT_MODEL
     temperature = 0.3
     json_mode = True
 
     # Call the function with JSON_mode=True
     result = get_completion(
-        prompt, system_message, model, temperature, json_mode
+        prompt, model, system_message, temperature, json_mode
     )
 
     # Assert that the result is not None
@@ -44,13 +48,13 @@ def test_get_completion_non_json_mode_api_call():
     # Set up the test data
     prompt = "What is the capital of France?"
     system_message = "You are a helpful assistant."
-    model = "gpt-4-turbo"
+    model = DEFAULT_MODEL
     temperature = 0.3
     json_mode = False
 
     # Call the function with JSON_mode=False
     result = get_completion(
-        prompt, system_message, model, temperature, json_mode
+        prompt, model, system_message, temperature, json_mode
     )
 
     # Assert that the result is not None
@@ -66,6 +70,7 @@ def test_one_chunk_initial_translation():
     target_lang = "Spanish"
     source_text = "Hello, how are you?"
     expected_translation = "Hola, ¿cómo estás?"
+    model = DEFAULT_MODEL
 
     # Mock the get_completion_content function
     with patch(
@@ -75,7 +80,7 @@ def test_one_chunk_initial_translation():
 
         # Call the function with test data
         translation = one_chunk_initial_translation(
-            source_lang, target_lang, source_text
+            source_lang, target_lang, source_text, model
         )
 
         # Assert the expected translation is returned
@@ -90,7 +95,7 @@ Do not provide any explanations or text apart from the translation.
 {target_lang}:"""
 
         mock_get_completion.assert_called_once_with(
-            expected_prompt, system_message=expected_system_message
+            expected_prompt, model=model, system_message=expected_system_message
         )
 
 
@@ -101,6 +106,7 @@ def test_one_chunk_reflect_on_translation():
     country = "Mexico"
     source_text = "This is a sample source text."
     translation_1 = "Este es un texto de origen de muestra."
+    model = DEFAULT_MODEL
 
     # Define the expected reflection
     expected_reflection = "The translation is accurate and conveys the meaning of the source text well. However, here are a few suggestions for improvement:\n\n1. Consider using 'texto fuente' instead of 'texto de origen' for a more natural translation of 'source text'.\n2. Add a definite article before 'texto fuente' to improve fluency: 'Este es un texto fuente de muestra.'\n3. If the context allows, you could also use 'texto de ejemplo' as an alternative translation for 'sample text'."
@@ -113,7 +119,7 @@ def test_one_chunk_reflect_on_translation():
 
         # Call the function with test data
         reflection = one_chunk_reflect_on_translation(
-            source_lang, target_lang, source_text, translation_1, country
+            source_lang, target_lang, source_text, translation_1, model, country
         )
 
         # Assert that the reflection matches the expected reflection
@@ -145,7 +151,7 @@ Output only the suggestions and nothing else."""
         expected_system_message = f"You are an expert linguist specializing in translation from {source_lang} to {target_lang}. \
 You will be provided with a source text and its translation and your goal is to improve the translation."
         mock_get_completion.assert_called_once_with(
-            expected_prompt, system_message=expected_system_message
+            expected_prompt, model=model, system_message=expected_system_message
         )
 
 
@@ -166,7 +172,7 @@ def test_one_chunk_improve_translation(mock_get_completion, example_data):
     mock_get_completion.return_value = (
         "Esta es una traducción de ejemplo mejorada."
     )
-
+    model = DEFAULT_MODEL
     # Call the function with the example data
     result = one_chunk_improve_translation(
         example_data["source_lang"],
@@ -174,6 +180,7 @@ def test_one_chunk_improve_translation(mock_get_completion, example_data):
         example_data["source_text"],
         example_data["translation_1"],
         example_data["reflection"],
+        model=model,
     )
 
     # Assert that the function returns the expected translation
@@ -211,7 +218,7 @@ Output only the new translation and nothing else."""
     expected_system_message = f"You are an expert linguist, specializing in translation editing from English to Spanish."
 
     mock_get_completion.assert_called_once_with(
-        expected_prompt, expected_system_message
+        expected_prompt, model, system_message=expected_system_message
     )
 
 
@@ -224,6 +231,7 @@ def test_one_chunk_translate_text(mocker):
     translation_1 = "Hola, ¿cómo estás?"
     reflection = "The translation looks good, but it could be more formal."
     translation2 = "Hola, ¿cómo está usted?"
+    model = DEFAULT_MODEL
 
     # Mock the helper functions
     mock_initial_translation = mocker.patch(
@@ -241,7 +249,7 @@ def test_one_chunk_translate_text(mocker):
 
     # Call the function being tested
     result = one_chunk_translate_text(
-        source_lang, target_lang, source_text, country
+        source_lang, target_lang, source_text, model, country
     )
 
     # Assert the expected result
@@ -249,13 +257,13 @@ def test_one_chunk_translate_text(mocker):
 
     # Assert that the helper functions were called with the correct arguments
     mock_initial_translation.assert_called_once_with(
-        source_lang, target_lang, source_text
+        source_lang, target_lang, source_text, model
     )
     mock_reflect_on_translation.assert_called_once_with(
-        source_lang, target_lang, source_text, translation_1, country
+        source_lang, target_lang, source_text, translation_1, model, country
     )
     mock_improve_translation.assert_called_once_with(
-        source_lang, target_lang, source_text, translation_1, reflection
+        source_lang, target_lang, source_text, translation_1, reflection, model,
     )
 
 
