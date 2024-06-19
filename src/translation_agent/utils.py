@@ -22,6 +22,12 @@ MAX_TOKENS_PER_CHUNK = (
 DEFAULT_MODEL = os.getenv("DEFAULT_MODEL")
 DEFAULT_CHUNK_MODEL = os.getenv("DEFAULT_CHUNK_MODEL")
 # discrete chunks to translate one chunk at a time
+# load default tokenizer
+if DEFAULT_CHUNK_MODEL in tiktoken.model.MODEL_TO_ENCODING:
+    map_model_name = tiktoken.model.MODEL_TO_ENCODING[DEFAULT_CHUNK_MODEL]
+    DEFAULT_TOKENIZER = tiktoken.get_encoding(map_model_name)
+else:
+    DEFAULT_TOKENIZER = AutoTokenizer.from_pretrained(DEFAULT_CHUNK_MODEL)
 
 
 def get_completion(
@@ -280,15 +286,16 @@ def one_chunk_translate_text(
 
 
 def num_tokens_in_string(
-    input_str: str, encoding_name: str = "cl100k_base"
+    input_str: str, encoding_name: str = "cl100k_base", tokenizer: Union[AutoTokenizer, tiktoken.core.Encoding] = None
 ) -> int:
     """
     Calculate the number of tokens in a given string using a specified encoding.
 
     Args:
-        str (str): The input string to be tokenized.
+        input_str (str): The input string to be tokenized.
         encoding_name (str, optional): The name of the encoding to use. Defaults to "cl100k_base",
             which is the most commonly used encoder (used by GPT-4).
+        tokenizer (AutoTokenizer | tiktoken.core.Encoding): for string tokenize
 
     Returns:
         int: The number of tokens in the input string.
@@ -299,8 +306,9 @@ def num_tokens_in_string(
         >>> print(num_tokens)
         5
     """
-    encoding = tiktoken.get_encoding(encoding_name)
-    num_tokens = len(encoding.encode(input_str))
+    if tokenizer is None:
+        tokenizer = tiktoken.get_encoding(encoding_name)
+    num_tokens = len(tokenizer.encode(input_str))
     return num_tokens
 
 
@@ -666,8 +674,15 @@ def translate(
     max_tokens=MAX_TOKENS_PER_CHUNK,
 ):
     """Translate the source_text from source_lang to target_lang."""
+    if chunk_model == DEFAULT_CHUNK_MODEL:
+        tokenizer = DEFAULT_TOKENIZER
+    elif chunk_model in tiktoken.model.MODEL_TO_ENCODING:
+        map_name = tiktoken.model.MODEL_TO_ENCODING[DEFAULT_CHUNK_MODEL]
+        tokenizer = tiktoken.get_encoding(map_name)
+    else:
+        tokenizer = AutoTokenizer.from_pretrained(chunk_model)
 
-    num_tokens_in_text = num_tokens_in_string(source_text)
+    num_tokens_in_text = num_tokens_in_string(source_text, tokenizer=tokenizer)
 
     ic(num_tokens_in_text)
 
@@ -695,7 +710,6 @@ def translate(
                 chunk_overlap=0,
             )
         else:
-            tokenizer = AutoTokenizer.from_pretrained(chunk_model)
             text_splitter = RecursiveCharacterTextSplitter.from_huggingface_tokenizer(
                 tokenizer=tokenizer,
                 chunk_size=token_size,
