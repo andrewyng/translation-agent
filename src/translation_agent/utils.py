@@ -6,6 +6,7 @@ import openai
 import tiktoken
 from dotenv import load_dotenv
 from icecream import ic
+from transformers import AutoTokenizer
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 
@@ -687,12 +688,19 @@ def translate(
         )
 
         ic(token_size)
-
-        text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
-            model_name=chunk_model,
-            chunk_size=token_size,
-            chunk_overlap=0,
-        )
+        if chunk_model in tiktoken.model.MODEL_TO_ENCODING:
+            text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
+                model_name=chunk_model,
+                chunk_size=token_size,
+                chunk_overlap=0,
+            )
+        else:
+            tokenizer = AutoTokenizer.from_pretrained(chunk_model)
+            text_splitter = RecursiveCharacterTextSplitter.from_huggingface_tokenizer(
+                tokenizer=tokenizer,
+                chunk_size=token_size,
+                chunk_overlap=0,
+            )
 
         source_text_chunks = text_splitter.split_text(source_text)
 
