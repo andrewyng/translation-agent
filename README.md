@@ -61,6 +61,11 @@ source_lang, target_lang, country = "English", "Simplified Chinese", "China"
 translation = ta.translate(source_lang, target_lang, source_text, country)  
 ```
 
+run  
+```bash 
+python test.py 
+```
+
 ### result:  
 ```text
 ic| num_tokens_in_text: 14  
