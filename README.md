@@ -1,6 +1,11 @@
 # Translation Agent: Agentic translation using reflection workflow
 
-# adding supporting Amazon Bedrock
+# adding supporting Amazon Bedrock   
+main changes:  
+src/translation_agent/utils.py  
++.env  
++test.py  
+
 
 This is a Python demonstration of a reflection agentic workflow for machine translation. The main steps are:
 1. Prompt an LLM to translate a text from `source_language` to `target_language`; 
