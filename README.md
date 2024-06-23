@@ -50,7 +50,7 @@ git clone https://github.com/shenshaoyong/translation-agent.git
 cd translation-agent  
 poetry install  
 poetry shell   
-pip install boto3 botocore  
+pip install -qU boto3 botocore  
 ```
 ### Usage:  
 vi test.py   
