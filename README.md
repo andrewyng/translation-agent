@@ -1,5 +1,7 @@
 # Translation Agent: Agentic translation using reflection workflow
 
+# adding supporting Amazon Bedrock
+
 This is a Python demonstration of a reflection agentic workflow for machine translation. The main steps are:
 1. Prompt an LLM to translate a text from `source_language` to `target_language`; 
 2. Have the LLM reflect on the translation to come up with constructive suggestions for improving it; 
@@ -32,20 +34,38 @@ To get started with `translation-agent`, follow these steps:
 pip install poetry 
 ```
 
-- A .env file with a OPENAI_API_KEY is required to run the workflow. See the .env.sample file as an example.
-```bash
-git clone https://github.com/andrewyng/translation-agent.git
-cd translation-agent
-poetry install
-poetry shell # activates virtual environment
-```
-### Usage:
+- A .env file with a OPENAI_API_KEY / Amazon AKSK is required to run the workflow. See the .env.sample file as an example.  
+vi .env    
+```bash  
+ACCESS_KEY="your aws ak"
+SECRET_KEY="your aws sk"
+OPENAI_API_KEY="your open api key"
+BEDROCK="True"
 
-```python
-import translation_agent as ta
-source_lang, target_lang, country = "English", "Spanish", "Mexico"
-translation = ta.translate(source_lang, target_lang, source_text, country)
 ```
+
+
+```bash  
+git clone https://github.com/shenshaoyong/translation-agent.git  
+cd translation-agent  
+poetry install  
+poetry shell   
+pip install boto3 botocore  
+```
+### Usage:  
+vi test.py   
+```python
+import translation_agent as ta  
+source_text = "Today is a good day. Sunny, shine, breeze, blue sky"  
+source_lang, target_lang, country = "English", "Simplified Chinese", "China"  
+translation = ta.translate(source_lang, target_lang, source_text, country)  
+```
+
+### result:  
+```text
+
+```
+
 See examples/example_script.py for an example script to try out.
 
 ## License
