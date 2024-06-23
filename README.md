@@ -34,6 +34,14 @@ To get started with `translation-agent`, follow these steps:
 pip install poetry 
 ```
 
+```bash  
+git clone https://github.com/shenshaoyong/translation-agent.git  
+cd translation-agent  
+poetry install  
+poetry shell   
+pip install -qU boto3 botocore  
+```
+
 - A .env file with a OPENAI_API_KEY / Amazon AKSK is required to run the workflow. See the .env.sample file as an example.  
 vi .env    
 ```bash  
@@ -44,14 +52,6 @@ BEDROCK="True"
 
 ```
 
-
-```bash  
-git clone https://github.com/shenshaoyong/translation-agent.git  
-cd translation-agent  
-poetry install  
-poetry shell   
-pip install -qU boto3 botocore  
-```
 ### Usage:  
 vi test.py   
 ```python
