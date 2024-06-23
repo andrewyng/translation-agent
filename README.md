@@ -63,7 +63,21 @@ translation = ta.translate(source_lang, target_lang, source_text, country)
 
 ### result:  
 ```text
+ic| num_tokens_in_text: 14  
+ic| 'Translating text as single chunk'  
+今天是个好天。阳光明媚，微风拂面，蓝天如洗。  
+1. 将"今天是个好天"改为"今天是个好日子"或"今天天气真好"，更符合口语表达习惯。  
 
+2. 考虑将"阳光明媚"改为"阳光灿烂"或"阳光普照"，以更贴近原文的"shine"。  
+
+3. "微风拂面"虽然是优美的表达，但可以简化为"微风轻拂"或"和风徐徐"，更接近原文的简洁风格。  
+
+4. "蓝天如洗"是很好的表达，但可以考虑改为"天空湛蓝"或"蓝天万里"，以更直接地对应原文的"blue sky"。  
+
+5. 可以考虑在句子之间添加逗号，使整体结构更加紧凑，例如："今天天气真好，阳光灿烂，和风徐徐，蓝天万里。"  
+ 
+6. 原文中的"Sunny, shine"有重复之意，翻译时可以合并处理，只保留一个相关描述即可。  
+今天天气真好，阳光灿烂，和风徐徐，蓝天万里。  
 ```
 
 See examples/example_script.py for an example script to try out.
