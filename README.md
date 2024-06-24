@@ -48,6 +48,21 @@ translation = ta.translate(source_lang, target_lang, source_text, country)
 ```
 See examples/example_script.py for an example script to try out.
 
+### Using OpenAI-compatible AI as backend:
+
+- Add `OPENAI_BASE_URL` to the environment variables or .env file to switch the API URL.
+```bash
+# export OPENAI_BASE_URL="https://api.openai.com/v1"
+export OPENAI_BASE_URL="http://localhost:8080/v1
+```
+
+- Select a model.
+```python
+import translation_agent as ta
+source_lang, target_lang, country = "English", "Spanish", "Mexico"
+translation = ta.translate(source_lang, target_lang, source_text, country, model = "llama-3-8b")
+```
+
 ## License
 
 Translation Agent is released under the **MIT License**. You are free to use, modify, and distribute the code
