@@ -6,7 +6,15 @@ labels: feature request
 assignees: ''
 ---
 
-For feature proposals that require additional research, include:
+**What is the issue about?**
+- [ ] improving/extending existing features;
+- [ ] issue requires additional research to be implemented
+
+#### For improving/extending existing features, please include:  
+ - Description of the proposed feature. 
+ - Include a short motivation of why the feature will be useful to users. 
+
+**For feature proposals that require additional research, include:**
 * Proposal and background.
 * Motivation of why the feature is interesting from reserach perspective and why it will be useful for the users.
 * Short outline of experiments, and description of necessary sub components (e.g. data curation, training, evaluation), if needed.
