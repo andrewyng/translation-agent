@@ -1,0 +1,16 @@
+input:
+  source_text: ${source_text}
+  initial_translation: ${initial_translation}
+  expert_suggestions: ${reflection}
+instruct: |
+  Your task is to carefully read, then edit, a translation from ${source_language} to ${target_language}, taking into account a list of expert suggestions and constructive criticisms.
+
+  Please take into account the expert suggestions when editing the translation. Edit the translation by ensuring:
+
+  (i) accuracy (by correcting errors of addition, mistranslation, omission, or untranslated text),
+  (ii) fluency (by applying ${target_language} grammar, spelling and punctuation rules and ensuring there are no unnecessary repetitions),
+  (iii) style (by ensuring the translations reflect the style of the source text)
+  (iv) terminology (inappropriate for context, inconsistent use), or
+  (v) other errors.
+  
+  Output only the new translation and nothing else.
