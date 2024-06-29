@@ -1,5 +1,12 @@
 # Translation Agent: Agentic translation using reflection workflow
 
+# adding supporting Amazon Bedrock   
+main changes:  
+src/translation_agent/utils.py  
++.env  
++test.py  
+
+
 This is a Python demonstration of a reflection agentic workflow for machine translation. The main steps are:
 1. Prompt an LLM to translate a text from `source_language` to `target_language`;
 2. Have the LLM reflect on the translation to come up with constructive suggestions for improving it;
@@ -32,20 +39,57 @@ To get started with `translation-agent`, follow these steps:
 pip install poetry
 ```
 
-- A .env file with a OPENAI_API_KEY is required to run the workflow. See the .env.sample file as an example.
-```bash
-git clone https://github.com/andrewyng/translation-agent.git
-cd translation-agent
-poetry install
-poetry shell # activates virtual environment
+```bash  
+git clone https://github.com/shenshaoyong/translation-agent.git  
+cd translation-agent  
+poetry install  
+poetry shell   
+pip install -qU boto3 botocore  
 ```
-### Usage:
 
-```python
-import translation_agent as ta
-source_lang, target_lang, country = "English", "Spanish", "Mexico"
-translation = ta.translate(source_lang, target_lang, source_text, country)
+- A .env file with a OPENAI_API_KEY / Amazon AKSK is required to run the workflow. See the .env.sample file as an example.  
+vi .env    
+```bash  
+ACCESS_KEY="your aws ak"
+SECRET_KEY="your aws sk"
+OPENAI_API_KEY="your open api key"
+BEDROCK="True"
+
 ```
+
+### Usage:  
+vi test.py   
+```python
+import translation_agent as ta  
+source_text = "Today is a good day. Sunny, shine, breeze, blue sky"  
+source_lang, target_lang, country = "English", "Simplified Chinese", "China"  
+translation = ta.translate(source_lang, target_lang, source_text, country)  
+```
+
+run  
+```bash 
+python test.py 
+```
+
+### result:  
+```text
+ic| num_tokens_in_text: 14  
+ic| 'Translating text as single chunk'  
+今天是个好天。阳光明媚，微风拂面，蓝天如洗。  
+1. 将"今天是个好天"改为"今天是个好日子"或"今天天气真好"，更符合口语表达习惯。  
+
+2. 考虑将"阳光明媚"改为"阳光灿烂"或"阳光普照"，以更贴近原文的"shine"。  
+
+3. "微风拂面"虽然是优美的表达，但可以简化为"微风轻拂"或"和风徐徐"，更接近原文的简洁风格。  
+
+4. "蓝天如洗"是很好的表达，但可以考虑改为"天空湛蓝"或"蓝天万里"，以更直接地对应原文的"blue sky"。  
+
+5. 可以考虑在句子之间添加逗号，使整体结构更加紧凑，例如："今天天气真好，阳光灿烂，和风徐徐，蓝天万里。"  
+ 
+6. 原文中的"Sunny, shine"有重复之意，翻译时可以合并处理，只保留一个相关描述即可。  
+今天天气真好，阳光灿烂，和风徐徐，蓝天万里。  
+```
+
 See examples/example_script.py for an example script to try out.
 
 ## License
