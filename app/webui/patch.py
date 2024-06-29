@@ -94,7 +94,6 @@ def get_completion(
             response = llm.chat(
                 messages=messages,
                 temperature=temperature,
-                top_p=1,
             )
             return response.message.content
         else:
@@ -108,7 +107,6 @@ def get_completion(
             if json_mode:
                 response = llm.chat(
                     temperature=temperature,
-                    top_p=1,
                     response_format={"type": "json_object"},
                     messages=messages,
                 )
@@ -116,7 +114,6 @@ def get_completion(
             else:
                 response = llm.chat(
                     temperature=temperature,
-                    top_p=1,
                     messages=messages,
                 )
                 return response.message.content

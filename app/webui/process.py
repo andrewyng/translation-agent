@@ -56,6 +56,7 @@ def translator(
         country,
         max_tokens=1000,
 ):
+
     """Translate the source_text from source_lang to target_lang."""
     num_tokens_in_text = num_tokens_in_string(source_text)
 
@@ -125,4 +126,91 @@ def translator(
         return init_translation, reflection, final_translation
 
 
+def translator_sec(
+        endpoint2,
+        model2,
+        api_key2,
+        context_window,
+        num_output,
+        source_lang,
+        target_lang,
+        source_text,
+        country,
+        max_tokens=1000,
+):
 
+    """Translate the source_text from source_lang to target_lang."""
+    num_tokens_in_text = num_tokens_in_string(source_text)
+
+    ic(num_tokens_in_text)
+
+    if num_tokens_in_text < max_tokens:
+        ic("Translating text as single chunk")
+
+        #Note: use yield from B() if put yield in function B()
+        init_translation = one_chunk_initial_translation(
+            source_lang, target_lang, source_text
+        )
+
+
+        reflection = one_chunk_reflect_on_translation(
+            source_lang, target_lang, source_text, init_translation, country
+        )
+        try:
+            model_load(endpoint2, model2, api_key2, context_window, num_output)
+        except Exception as e:
+            raise gr.Error(f"An unexpected error occurred: {e}")
+        final_translation = one_chunk_improve_translation(
+            source_lang, target_lang, source_text, init_translation, reflection
+        )
+
+        return init_translation, reflection, final_translation
+
+    else:
+        ic("Translating text as multiple chunks")
+
+        token_size = calculate_chunk_size(
+            token_count=num_tokens_in_text, token_limit=max_tokens
+        )
+
+        ic(token_size)
+
+        #using sentence splitter
+        text_parser = SentenceSplitter(
+           chunk_size=token_size,
+        )
+
+        source_text_chunks = text_parser.split_text(source_text)
+
+        translation_1_chunks = multichunk_initial_translation(
+            source_lang, target_lang, source_text_chunks
+        )
+
+        init_translation = "".join(translation_1_chunks)
+
+        try:
+            model_load(endpoint2, model2, api_key2, context_window, num_output)
+        except Exception as e:
+            raise gr.Error(f"An unexpected error occurred: {e}")
+
+        reflection_chunks = multichunk_reflect_on_translation(
+            source_lang,
+            target_lang,
+            source_text_chunks,
+            translation_1_chunks,
+            country,
+        )
+
+        reflection = "".join(reflection_chunks)
+
+        translation_2_chunks = multichunk_improve_translation(
+            source_lang,
+            target_lang,
+            source_text_chunks,
+            translation_1_chunks,
+            reflection_chunks,
+        )
+
+        final_translation = "".join(translation_2_chunks)
+
+        return init_translation, reflection, final_translation

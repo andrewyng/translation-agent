@@ -20,12 +20,14 @@ This repository contains a Gradio web UI for a translation agent that utilizes v
     - Hugging Face Inference API
     ...
 Llama Index supported, easily extendable
+- **Different LLM for reflection**: Now you can enable second Endpoint to use another LLM for reflection.
 
 
 **Getting Started**
 
-1. **Install Dependencies:**
-    **Linux(Using Python Venv)**
+1. **Install Dependencies(Using Python Venv):**
+
+    **Linux**
     ```bash
         git clone https://github.com/andrewyng/translation-agent.git
         cd translation-agent
@@ -71,6 +73,7 @@ Llama Index supported, easily extendable
 3. If using Hugging Face API, enter your `HF_TOKEN` in the `api_key` textbox.
 4. Input the source text or upload your document file.
 5. Submit and get translation, the UI will display the translated text with tokenization and highlight differences.
+6. Enable Second Endpoint, you can add another endpoint by different LLMs for reflection.
 
 **Customization:**
 

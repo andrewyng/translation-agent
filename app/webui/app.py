@@ -7,13 +7,17 @@ sys.path.insert(0, project_root)
 
 import re
 import gradio as gr
-from app.webui.process import model_load, diff_texts, translator
+from app.webui.process import model_load, diff_texts, translator, translator_sec
 from llama_index.core import SimpleDirectoryReader
 
 def huanik(
     endpoint,
     model,
     api_key,
+    choice,
+    endpoint2,
+    model2,
+    api_key2,
     source_lang,
     target_lang,
     source_text,
@@ -33,13 +37,28 @@ def huanik(
 
     source_text =  re.sub(r'\n+', '\n', source_text)
 
-    init_translation, reflect_translation, final_translation = translator(
-        source_lang=source_lang,
-        target_lang=target_lang,
-        source_text=source_text,
-        country=country,
-        max_tokens=max_tokens,
-    )
+    if choice:
+        init_translation, reflect_translation, final_translation = translator_sec(
+            endpoint2=endpoint2,
+            model2=model2,
+            api_key2=api_key2,
+            context_window=context_window,
+            num_output=num_output,
+            source_lang=source_lang,
+            target_lang=target_lang,
+            source_text=source_text,
+            country=country,
+            max_tokens=max_tokens,
+        )
+
+    else:
+        init_translation, reflect_translation, final_translation = translator(
+            source_lang=source_lang,
+            target_lang=target_lang,
+            source_text=source_text,
+            country=country,
+            max_tokens=max_tokens,
+        )
 
     final_diff = gr.HighlightedText(
         diff_texts(init_translation, final_translation),
@@ -66,6 +85,13 @@ def read_doc(file):
     docs = SimpleDirectoryReader(input_files=[file]).load_data()
     return docs[0].text
 
+def enable_sec(choice):
+    if choice:
+        return gr.update(visible = True), gr.update(visible = True), gr.update(visible = True)
+    else:
+        return gr.update(visible = False), gr.update(visible = False), gr.update(visible = False)
+
+
 TITLE = """
 <h1><a href="https://github.com/andrewyng/translation-agent">Translation-Agent</a> webUI</h1>
 """
@@ -91,8 +117,17 @@ with gr.Blocks(theme="soft", css=CSS, fill_height=True) as demo:
                 choices=["Groq","OpenAI","Cohere","TogetherAI","Ollama","Huggingface"],
                 value="OpenAI",
             )
+            choice = gr.Checkbox(label="Second Endpoint", info="Add second endpoint for reflection")
             model = gr.Textbox(label="Model", value="gpt-4o", )
             api_key = gr.Textbox(label="API_KEY", type="password", )
+            endpoint2 = gr.Dropdown(
+                label="Endpoint 2",
+                choices=["Groq","OpenAI","Cohere","TogetherAI","Ollama","Huggingface"],
+                value="OpenAI",
+                visible=False,
+            )
+            model2 = gr.Textbox(label="Model 2", value="gpt-4o", visible=False, )
+            api_key2 = gr.Textbox(label="API_KEY 2", type="password", visible=False,)
             source_lang = gr.Textbox(
                 label="Source Lang",
                 value="English",
@@ -146,7 +181,9 @@ with gr.Blocks(theme="soft", css=CSS, fill_height=True) as demo:
         clear = gr.ClearButton([source_text, output_init, output_reflect, output_final])
 
     endpoint.change(fn=update_model, inputs=[endpoint], outputs=[model])
-    submit.click(fn=huanik, inputs=[endpoint, model, api_key, source_lang, target_lang, source_text, country, max_tokens, context_window, num_output], outputs=[output_init, output_reflect, output_final, output_diff])
+    choice.select(fn=enable_sec, inputs=[choice], outputs=[endpoint2, model2, api_key2])
+    endpoint2.change(fn=update_model, inputs=[endpoint2], outputs=[model2])
+    submit.click(fn=huanik, inputs=[endpoint, model, api_key, choice, endpoint2, model2, api_key2, source_lang, target_lang, source_text, country, max_tokens, context_window, num_output], outputs=[output_init, output_reflect, output_final, output_diff])
     upload.upload(fn=read_doc, inputs = upload, outputs = source_text)
 
 if __name__ == "__main__":
