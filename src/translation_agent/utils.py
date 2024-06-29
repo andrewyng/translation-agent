@@ -141,7 +141,7 @@ The source text and initial translation, delimited by XML tags <SOURCE_TEXT></SO
 When writing suggestions, pay attention to whether there are ways to improve the translation's \n\
 (i) accuracy (by correcting errors of addition, mistranslation, omission, or untranslated text),\n\
 (ii) fluency (by applying {target_lang} grammar, spelling and punctuation rules, and ensuring there are no unnecessary repetitions),\n\
-(iii) style (by ensuring the translations reflect the style of the source text and takes into account any cultural context),\n\
+(iii) style (by ensuring the translations reflect the style of the source text and take into account any cultural context),\n\
 (iv) terminology (by ensuring terminology use is consistent and reflects the source text domain; and by only ensuring you use equivalent idioms {target_lang}).\n\
 
 Write a list of specific, helpful and constructive suggestions for improving the translation.
@@ -149,7 +149,7 @@ Each suggestion should address one specific part of the translation.
 Output only the suggestions and nothing else."""
 
     else:
-        reflection_prompt = f"""Your task is to carefully read a source text and a translation from {source_lang} to {target_lang}, and then give constructive criticism and helpful suggestions to improve the translation. \
+        reflection_prompt = f"""Your task is to carefully read a source text and a translation from {source_lang} to {target_lang}, and then give constructive criticisms and helpful suggestions to improve the translation. \
 
 The source text and initial translation, delimited by XML tags <SOURCE_TEXT></SOURCE_TEXT> and <TRANSLATION></TRANSLATION>, are as follows:
 
@@ -164,7 +164,7 @@ The source text and initial translation, delimited by XML tags <SOURCE_TEXT></SO
 When writing suggestions, pay attention to whether there are ways to improve the translation's \n\
 (i) accuracy (by correcting errors of addition, mistranslation, omission, or untranslated text),\n\
 (ii) fluency (by applying {target_lang} grammar, spelling and punctuation rules, and ensuring there are no unnecessary repetitions),\n\
-(iii) style (by ensuring the translations reflect the style of the source text and takes into account any cultural context),\n\
+(iii) style (by ensuring the translations reflect the style of the source text and take into account any cultural context),\n\
 (iv) terminology (by ensuring terminology use is consistent and reflects the source text domain; and by only ensuring you use equivalent idioms {target_lang}).\n\
 
 Write a list of specific, helpful and constructive suggestions for improving the translation.
@@ -311,7 +311,7 @@ def multichunk_initial_translation(
 
     system_message = f"You are an expert linguist, specializing in translation from {source_lang} to {target_lang}."
 
-    translation_prompt = """Your task is provide a professional translation from {source_lang} to {target_lang} of PART of a text.
+    translation_prompt = """Your task is to provide a professional translation from {source_lang} to {target_lang} of PART of a text.
 
 The source text is below, delimited by XML tags <SOURCE_TEXT> and </SOURCE_TEXT>. Translate only the part within the source text
 delimited by <TRANSLATE_THIS> and </TRANSLATE_THIS>. You can use the rest of the source text as context, but do not translate any
@@ -433,7 +433,7 @@ The translation of the indicated part, delimited below by <TRANSLATION> and </TR
 When writing suggestions, pay attention to whether there are ways to improve the translation's:\n\
 (i) accuracy (by correcting errors of addition, mistranslation, omission, or untranslated text),\n\
 (ii) fluency (by applying {target_lang} grammar, spelling and punctuation rules, and ensuring there are no unnecessary repetitions),\n\
-(iii) style (by ensuring the translations reflect the style of the source text and takes into account any cultural context),\n\
+(iii) style (by ensuring the translations reflect the style of the source text and take into account any cultural context),\n\
 (iv) terminology (by ensuring terminology use is consistent and reflects the source text domain; and by only ensuring you use equivalent idioms {target_lang}).\n\
 
 Write a list of specific, helpful and constructive suggestions for improving the translation.
@@ -513,7 +513,7 @@ To reiterate, only part of the text is being translated, shown here again betwee
 {chunk_to_translate}
 </TRANSLATE_THIS>
 
-The translation of the indicated part, delimited below by <TRANSLATION> and </TRANSLATION>, is as follows:
+The translation of the indicated part, delimited below by <TRANSLATION> and </TRANSLATION>, are as follows:
 <TRANSLATION>
 {translation_1_chunk}
 </TRANSLATION>
@@ -655,7 +655,7 @@ def translate(
     ic(num_tokens_in_text)
 
     if num_tokens_in_text < max_tokens:
-        ic("Translating text as single chunk")
+        ic("Translating text as a single chunk")
 
         final_translation = one_chunk_translate_text(
             source_lang, target_lang, source_text, country
