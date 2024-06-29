@@ -1,0 +1,12 @@
+llama-index
+llama-index-llms-groq
+llama-index-llms-openai
+llama-index-llms-cohere
+llama-index-llms-together
+llama-index-llms-ollama
+llama-index-llms-huggingface-api
+tiktoken
+icecream
+nltk
+langchain-text-splitters
+gradio

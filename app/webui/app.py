@@ -1,0 +1,153 @@
+import sys
+import os
+
+# Add the project root to the Python path
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, project_root)
+
+import re
+import gradio as gr
+from app.webui.process import model_load, diff_texts, translator
+from llama_index.core import SimpleDirectoryReader
+
+def huanik(
+    endpoint,
+    model,
+    api_key,
+    source_lang,
+    target_lang,
+    source_text,
+    country,
+    max_tokens,
+    context_window,
+    num_output,
+):
+
+    if not source_text or source_lang == target_lang:
+        raise gr.Error("Please check that the content or options are entered correctly.")
+
+    try:
+        model_load(endpoint, model, api_key, context_window, num_output)
+    except Exception as e:
+        raise gr.Error(f"An unexpected error occurred: {e}")
+
+    source_text =  re.sub(r'\n+', '\n', source_text)
+
+    init_translation, reflect_translation, final_translation = translator(
+        source_lang=source_lang,
+        target_lang=target_lang,
+        source_text=source_text,
+        country=country,
+        max_tokens=max_tokens,
+    )
+
+    final_diff = gr.HighlightedText(
+        diff_texts(init_translation, final_translation),
+        label="Diff translation",
+        combine_adjacent=True,
+        show_legend=True,
+        visible=True,
+        color_map={"removed": "red", "added": "green"})
+
+    return init_translation, reflect_translation, final_translation, final_diff
+
+def update_model(endpoint):
+    endpoint_model_map = {
+        "Groq": "llama3-70b-8192",
+        "OpenAI": "gpt-4o",
+        "Cohere": "command-r",
+        "TogetherAI": "Qwen/Qwen2-72B-Instruct",
+        "Ollama": "llama3",
+        "Huggingface": "mistralai/Mistral-7B-Instruct-v0.3"
+    }
+    return gr.update(value=endpoint_model_map[endpoint])
+
+def read_doc(file):
+    docs = SimpleDirectoryReader(input_files=[file]).load_data()
+    return docs[0].text
+
+TITLE = """
+<h1><a href="https://github.com/andrewyng/translation-agent">Translation-Agent</a> webUI</h1>
+"""
+
+CSS = """
+    h1 {
+        text-align: center;
+        display: block;
+        height: 10vh;
+        align-content: center;
+    }
+    footer {
+        visibility: hidden;
+    }
+"""
+
+with gr.Blocks(theme="soft", css=CSS, fill_height=True) as demo:
+    gr.Markdown(TITLE)
+    with gr.Row():
+        with gr.Column(scale=1):
+            endpoint = gr.Dropdown(
+                label="Endpoint",
+                choices=["Groq","OpenAI","Cohere","TogetherAI","Ollama","Huggingface"],
+                value="OpenAI",
+            )
+            model = gr.Textbox(label="Model", value="gpt-4o", )
+            api_key = gr.Textbox(label="API_KEY", type="password", )
+            source_lang = gr.Textbox(
+                label="Source Lang",
+                value="English",
+            )
+            target_lang = gr.Textbox(
+                label="Target Lang",
+                value="Spanish",
+            )
+            country = gr.Textbox(label="Country", value="Argentina", max_lines=1)
+            with gr.Accordion("Advanced Options", open=False):
+                max_tokens = gr.Slider(
+                    label="Max tokens Per Chunk",
+                    minimum=512,
+                    maximum=2046,
+                    value=1000,
+                    step=8,
+                    )
+                context_window = gr.Slider(
+                    label="Context Window",
+                    minimum=512,
+                    maximum=8192,
+                    value=4096,
+                    step=8,
+                    )
+                num_output = gr.Slider(
+                    label="Output Num",
+                    minimum=256,
+                    maximum=8192,
+                    value=512,
+                    step=8,
+                    )
+        with gr.Column(scale=4):
+            source_text = gr.Textbox(
+                label="Source Text",
+                value="How we live is so different from how we ought to live that he who studies "+\
+                "what ought to be done rather than what is done will learn the way to his downfall "+\
+                "rather than to his preservation.",
+                lines=10,
+            )
+            with gr.Tab("Final"):
+                output_final = gr.Textbox(label="FInal Translation", lines=10, show_copy_button=True)
+            with gr.Tab("Initial"):
+                output_init = gr.Textbox(label="Init Translation", lines=10, show_copy_button=True)
+            with gr.Tab("Reflection"):
+                output_reflect = gr.Textbox(label="Reflection", lines=10, show_copy_button=True)
+            with gr.Tab("Diff"):
+                output_diff = gr.HighlightedText(visible = False)
+    with gr.Row():
+        submit = gr.Button(value="Submit")
+        upload = gr.UploadButton(label="Upload", file_types=["text"])
+        clear = gr.ClearButton([source_text, output_init, output_reflect, output_final])
+
+    endpoint.change(fn=update_model, inputs=[endpoint], outputs=[model])
+    submit.click(fn=huanik, inputs=[endpoint, model, api_key, source_lang, target_lang, source_text, country, max_tokens, context_window, num_output], outputs=[output_init, output_reflect, output_final, output_diff])
+    upload.upload(fn=read_doc, inputs = upload, outputs = source_text)
+
+if __name__ == "__main__":
+    demo.queue(api_open=False).launch(show_api=False, share=False)
