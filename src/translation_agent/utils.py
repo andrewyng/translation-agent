@@ -93,9 +93,7 @@ Do not provide any explanations or text apart from the translation.
 
 {target_lang}:"""
 
-    prompt = translation_prompt.format(source_text=source_text)
-
-    translation = get_completion(prompt, system_message=system_message)
+    translation = get_completion(translation_prompt, system_message=system_message)
 
     return translation
 
