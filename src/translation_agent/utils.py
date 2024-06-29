@@ -704,7 +704,7 @@ def translate(
         source_text_chunks = text_splitter.split_text(source_text)
 
         translation_2_chunks = multichunk_translation(
-            source_lang, target_lang, source_text_chunks, country
+            source_lang, target_lang, source_text_chunks, country, model
         )
 
         return "".join(translation_2_chunks)
