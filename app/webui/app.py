@@ -35,7 +35,7 @@ def huanik(
     except Exception as e:
         raise gr.Error(f"An unexpected error occurred: {e}")
 
-    source_text =  re.sub(r'\n+', '\n', source_text)
+    source_text = re.sub(r'(?m)^\s*$\n?', '', source_text)
 
     if choice:
         init_translation, reflect_translation, final_translation = translator_sec(
@@ -83,7 +83,11 @@ def update_model(endpoint):
 
 def read_doc(file):
     docs = SimpleDirectoryReader(input_files=[file]).load_data()
-    return docs[0].text
+    texts = ""
+    for doc in docs:
+        texts += doc.text
+    texts = re.sub(r'(?m)^\s*$\n?', '', texts)
+    return texts
 
 def enable_sec(choice):
     if choice:

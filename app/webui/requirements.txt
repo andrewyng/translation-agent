@@ -10,3 +10,4 @@ icecream
 nltk
 langchain-text-splitters
 gradio
+docx2txt
