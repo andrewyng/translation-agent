@@ -1,6 +1,5 @@
-import re
 import gradio as gr
-import nltk
+from simplemma import simple_tokenizer
 from difflib import Differ
 from icecream import ic
 from app.webui.patch import model_load,num_tokens_in_string,one_chunk_initial_translation, one_chunk_reflect_on_translation, one_chunk_improve_translation
@@ -8,12 +7,9 @@ from app.webui.patch import calculate_chunk_size, multichunk_initial_translation
 
 from llama_index.core.node_parser import SentenceSplitter
 
-
-nltk.download('punkt', quiet=True)
-
 def tokenize(text):
     # Use nltk to tokenize the text
-    words = nltk.word_tokenize(text)
+    words = simple_tokenizer(text)
     # Check if the text contains spaces
     if ' ' in text:
         # Create a list of words and spaces
@@ -25,7 +21,6 @@ def tokenize(text):
         return tokens[:-1]  # Remove the last space
     else:
         return words
-
 
 def diff_texts(text1, text2):
     tokens1 = tokenize(text1)

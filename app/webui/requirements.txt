@@ -7,7 +7,7 @@ llama-index-llms-ollama
 llama-index-llms-huggingface-api
 tiktoken
 icecream
-nltk
+simplemma
 langchain-text-splitters
 gradio
 docx2txt
