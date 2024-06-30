@@ -152,14 +152,15 @@ def translator_sec(
             source_lang, target_lang, source_text
         )
 
-
-        reflection = one_chunk_reflect_on_translation(
-            source_lang, target_lang, source_text, init_translation, country
-        )
         try:
             model_load(endpoint2, model2, api_key2, context_window, num_output)
         except Exception as e:
             raise gr.Error(f"An unexpected error occurred: {e}")
+
+        reflection = one_chunk_reflect_on_translation(
+            source_lang, target_lang, source_text, init_translation, country
+        )
+
         final_translation = one_chunk_improve_translation(
             source_lang, target_lang, source_text, init_translation, reflection
         )
