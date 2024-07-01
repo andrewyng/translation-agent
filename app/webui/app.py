@@ -95,9 +95,13 @@ def enable_sec(choice):
     else:
         return gr.update(visible = False), gr.update(visible = False), gr.update(visible = False)
 
+def update_menu(visible):
+    return not visible, gr.update(visible=not visible)
 
 TITLE = """
-<h1><a href="https://github.com/andrewyng/translation-agent">Translation-Agent</a> webUI</h1>
+    <div style="display: inline-flex;">
+        <div style="margin-left: 6px; font-size:32px; color: #6366f1"><b>Translation Agent</b> WebUI</div>
+    </div>
 """
 
 CSS = """
@@ -110,12 +114,33 @@ CSS = """
     footer {
         visibility: hidden;
     }
+    .menu-btn {
+        background-color: transparent;
+        border: none;
+        padding: 0px;
+        max-width: 48px;
+        height: 48px;
+        min-width: 48px;
+        cursor: pointer;
+        transition: background-color .2s ease;
+    }
+    .menu-btn:hover {
+        background-color: #e0e7ff;
+    }
+    .button-icon {
+        height: 48px;
+        width: 48px;
+        margin-left: 10px;
+    }
 """
 
 with gr.Blocks(theme="soft", css=CSS, fill_height=True) as demo:
-    gr.Markdown(TITLE)
     with gr.Row():
-        with gr.Column(scale=1):
+        visible = gr.State(value=True)
+        menuBtn = gr.Button(value="", icon="./app/webui/icon.svg", elem_classes="menu-btn", size="sm")
+        gr.HTML(TITLE)
+    with gr.Row():
+        with gr.Column(scale=1) as menubar:
             endpoint = gr.Dropdown(
                 label="Endpoint",
                 choices=["Groq","OpenAI","Cohere","TogetherAI","Ollama","Huggingface"],
@@ -169,14 +194,14 @@ with gr.Blocks(theme="soft", css=CSS, fill_height=True) as demo:
                 value="How we live is so different from how we ought to live that he who studies "+\
                 "what ought to be done rather than what is done will learn the way to his downfall "+\
                 "rather than to his preservation.",
-                lines=10,
+                lines=12,
             )
             with gr.Tab("Final"):
-                output_final = gr.Textbox(label="FInal Translation", lines=10, show_copy_button=True)
+                output_final = gr.Textbox(label="FInal Translation", lines=12, show_copy_button=True)
             with gr.Tab("Initial"):
-                output_init = gr.Textbox(label="Init Translation", lines=10, show_copy_button=True)
+                output_init = gr.Textbox(label="Init Translation", lines=12, show_copy_button=True)
             with gr.Tab("Reflection"):
-                output_reflect = gr.Textbox(label="Reflection", lines=10, show_copy_button=True)
+                output_reflect = gr.Textbox(label="Reflection", lines=12, show_copy_button=True)
             with gr.Tab("Diff"):
                 output_diff = gr.HighlightedText(visible = False)
     with gr.Row():
@@ -184,6 +209,7 @@ with gr.Blocks(theme="soft", css=CSS, fill_height=True) as demo:
         upload = gr.UploadButton(label="Upload", file_types=["text"])
         clear = gr.ClearButton([source_text, output_init, output_reflect, output_final])
 
+    menuBtn.click(fn=update_menu, inputs=visible, outputs=[visible, menubar])
     endpoint.change(fn=update_model, inputs=[endpoint], outputs=[model])
     choice.select(fn=enable_sec, inputs=[choice], outputs=[endpoint2, model2, api_key2])
     endpoint2.change(fn=update_model, inputs=[endpoint2], outputs=[model2])
