@@ -114,30 +114,55 @@ CSS = """
     footer {
         visibility: hidden;
     }
-    .menu-btn {
+    .menu_btn {
+        width: 48px;
+        height: 48px;
+        max-width: 48px;
+        min-width: 48px;
+        padding: 0px;
         background-color: transparent;
         border: none;
-        padding: 0px;
-        max-width: 48px;
-        height: 48px;
-        min-width: 48px;
         cursor: pointer;
-        transition: background-color .2s ease;
+        position: relative;
+        box-shadow: none;
     }
-    .menu-btn:hover {
-        background-color: #e0e7ff;
+    .menu_btn::before,
+    .menu_btn::after {
+        content: '';
+        position: absolute;
+        width: 30px;
+        height: 3px;
+        background-color: #4f46e5;
+        transition: transform 0.3s ease;
     }
-    .button-icon {
-        height: 48px;
-        width: 48px;
-        margin-left: 10px;
+    .menu_btn::before {
+        top: 12px;
+        box-shadow: 0 8px 0 #6366f1;
     }
+    .menu_btn::after {
+        bottom: 16px;
+    }
+    .menu_btn.active::before {
+        transform: translateY(8px) rotate(45deg);
+        box-shadow: none;
+    }
+    .menu_btn.active::after {
+        transform: translateY(-8px) rotate(-45deg);
+    }
+"""
+
+JS = """
+    function () {
+        const menuBtn = document.getElementById('menu');
+        menuBtn.classList.toggle('active');
+    }
+
 """
 
 with gr.Blocks(theme="soft", css=CSS, fill_height=True) as demo:
     with gr.Row():
         visible = gr.State(value=True)
-        menuBtn = gr.Button(value="", icon="./app/webui/icon.svg", elem_classes="menu-btn", size="sm")
+        menuBtn = gr.Button(value="", elem_classes="menu_btn", elem_id="menu", size="sm")
         gr.HTML(TITLE)
     with gr.Row():
         with gr.Column(scale=1) as menubar:
@@ -209,7 +234,7 @@ with gr.Blocks(theme="soft", css=CSS, fill_height=True) as demo:
         upload = gr.UploadButton(label="Upload", file_types=["text"])
         clear = gr.ClearButton([source_text, output_init, output_reflect, output_final])
 
-    menuBtn.click(fn=update_menu, inputs=visible, outputs=[visible, menubar])
+    menuBtn.click(fn=update_menu, inputs=visible, outputs=[visible, menubar], js=JS)
     endpoint.change(fn=update_model, inputs=[endpoint], outputs=[model])
     choice.select(fn=enable_sec, inputs=[choice], outputs=[endpoint2, model2, api_key2])
     endpoint2.change(fn=update_model, inputs=[endpoint2], outputs=[model2])
