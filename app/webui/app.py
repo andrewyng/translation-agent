@@ -7,6 +7,7 @@ sys.path.insert(0, project_root)
 
 import re
 import gradio as gr
+from glob import glob
 from app.webui.process import model_load, diff_texts, translator, translator_sec
 from llama_index.core import SimpleDirectoryReader
 
@@ -97,6 +98,15 @@ def enable_sec(choice):
 
 def update_menu(visible):
     return not visible, gr.update(visible=not visible)
+
+def export_txt(strings):
+    os.makedirs("outputs", exist_ok=True)
+    base_count = len(glob(os.path.join("outputs", "*.txt")))
+    file_path = os.path.join("outputs", f"{base_count:06d}.txt")
+    print(file_path)
+    with open(file_path, "w", encoding="utf-8") as f:
+        f.write(strings)
+    return gr.update(value=file_path, visible=True)
 
 TITLE = """
     <div style="display: inline-flex;">
@@ -230,8 +240,9 @@ with gr.Blocks(theme="soft", css=CSS, fill_height=True) as demo:
             with gr.Tab("Diff"):
                 output_diff = gr.HighlightedText(visible = False)
     with gr.Row():
-        submit = gr.Button(value="Submit")
+        submit = gr.Button(value="Translate")
         upload = gr.UploadButton(label="Upload", file_types=["text"])
+        export = gr.DownloadButton(visible=False)
         clear = gr.ClearButton([source_text, output_init, output_reflect, output_final])
 
     menuBtn.click(fn=update_menu, inputs=visible, outputs=[visible, menubar], js=JS)
@@ -240,6 +251,6 @@ with gr.Blocks(theme="soft", css=CSS, fill_height=True) as demo:
     endpoint2.change(fn=update_model, inputs=[endpoint2], outputs=[model2])
     submit.click(fn=huanik, inputs=[endpoint, model, api_key, choice, endpoint2, model2, api_key2, source_lang, target_lang, source_text, country, max_tokens, context_window, num_output], outputs=[output_init, output_reflect, output_final, output_diff])
     upload.upload(fn=read_doc, inputs = upload, outputs = source_text)
-
+    output_final.change(fn=export_txt, inputs=output_final, outputs=[export])
 if __name__ == "__main__":
     demo.queue(api_open=False).launch(show_api=False, share=False)
