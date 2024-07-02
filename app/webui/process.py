@@ -46,11 +46,11 @@ def diff_texts(text1, text2):
 
 #modified from src.translaation-agent.utils.tranlsate
 def translator(
-        source_lang,
-        target_lang,
-        source_text,
-        country,
-        max_tokens=1000,
+        source_lang: str,
+        target_lang: str,
+        source_text: str,
+        country: str,
+        max_tokens:int = 1000,
 ):
 
     """Translate the source_text from source_lang to target_lang."""
@@ -123,16 +123,16 @@ def translator(
 
 
 def translator_sec(
-        endpoint2,
-        model2,
-        api_key2,
-        context_window,
-        num_output,
-        source_lang,
-        target_lang,
-        source_text,
-        country,
-        max_tokens=1000,
+        endpoint2: str,
+        model2: str,
+        api_key2: str,
+        context_window: int,
+        num_output: int,
+        source_lang: str,
+        target_lang: str,
+        source_text: str,
+        country: str,
+        max_tokens: int = 1000,
 ):
 
     """Translate the source_text from source_lang to target_lang."""

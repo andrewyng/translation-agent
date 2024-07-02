@@ -1,5 +1,8 @@
 # a monkey patch to use llama-index completion
 import os
+import time
+from functools import wraps
+from threading import Lock
 from typing import Union
 import src.translation_agent.utils as utils
 
@@ -13,15 +16,16 @@ from llama_index.llms.huggingface_api import HuggingFaceInferenceAPI
 from llama_index.core import Settings
 from llama_index.core.llms import ChatMessage
 
+RPM = 60
 
 # Add your LLMs here
-
 def model_load(
         endpoint: str,
         model: str,
         api_key: str = None,
         context_window: int = 4096,
         num_output: int = 512,
+        rpm: int = RPM,
 ):
     if endpoint == "Groq":
         llm = Groq(
@@ -53,6 +57,10 @@ def model_load(
             token=api_key if api_key else os.getenv("HF_TOKEN"),
             task="text-generation",
         )
+
+    global RPM
+    RPM = rpm
+
     Settings.llm = llm
     # maximum input size to the LLM
     Settings.context_window = context_window
@@ -60,7 +68,29 @@ def model_load(
     # number of tokens reserved for text generation.
     Settings.num_output = num_output
 
+def rate_limit(get_max_per_minute):
+    def decorator(func):
+        lock = Lock()
+        last_called = [0.0]
 
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            with lock:
+                max_per_minute = get_max_per_minute()
+                min_interval = 60.0 / max_per_minute
+                elapsed = time.time() - last_called[0]
+                left_to_wait = min_interval - elapsed
+
+                if left_to_wait > 0:
+                    time.sleep(left_to_wait)
+
+                ret = func(*args, **kwargs)
+                last_called[0] = time.time()
+                return ret
+        return wrapper
+    return decorator
+
+@rate_limit(lambda: RPM)
 def get_completion(
         prompt: str,
         system_message: str = "You are a helpful assistant.",
@@ -91,6 +121,7 @@ def get_completion(
                 ChatMessage(
                     role="user", content=prompt),
             ]
+
             response = llm.chat(
                 messages=messages,
                 temperature=temperature,

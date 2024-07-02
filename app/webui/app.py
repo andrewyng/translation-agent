@@ -12,27 +12,28 @@ from app.webui.process import model_load, diff_texts, translator, translator_sec
 from llama_index.core import SimpleDirectoryReader
 
 def huanik(
-    endpoint,
-    model,
-    api_key,
-    choice,
-    endpoint2,
-    model2,
-    api_key2,
-    source_lang,
-    target_lang,
-    source_text,
-    country,
-    max_tokens,
-    context_window,
-    num_output,
+    endpoint: str,
+    model: str,
+    api_key: str,
+    choice: str,
+    endpoint2: str,
+    model2: str,
+    api_key2: str,
+    source_lang: str,
+    target_lang: str,
+    source_text: str,
+    country: str,
+    max_tokens: int,
+    context_window: int,
+    num_output: int,
+    rpm: int,
 ):
 
     if not source_text or source_lang == target_lang:
         raise gr.Error("Please check that the content or options are entered correctly.")
 
     try:
-        model_load(endpoint, model, api_key, context_window, num_output)
+        model_load(endpoint, model, api_key, context_window, num_output, rpm)
     except Exception as e:
         raise gr.Error(f"An unexpected error occurred: {e}")
 
@@ -103,10 +104,15 @@ def export_txt(strings):
     os.makedirs("outputs", exist_ok=True)
     base_count = len(glob(os.path.join("outputs", "*.txt")))
     file_path = os.path.join("outputs", f"{base_count:06d}.txt")
-    print(file_path)
     with open(file_path, "w", encoding="utf-8") as f:
         f.write(strings)
     return gr.update(value=file_path, visible=True)
+
+def switch(source_lang,source_text,target_lang,output_final):
+    if output_final:
+        return gr.update(value=target_lang), gr.update(value=output_final), gr.update(value=source_lang), gr.update(value=source_text)
+    else:
+        return gr.update(value=target_lang), gr.update(value=source_text), gr.update(value=source_lang), gr.update(value="")
 
 TITLE = """
     <div style="display: inline-flex;">
@@ -159,6 +165,10 @@ CSS = """
     .menu_btn.active::after {
         transform: translateY(-8px) rotate(-45deg);
     }
+    .lang {
+        max-width: 100px;
+        min-width: 100px;
+    }
 """
 
 JS = """
@@ -190,16 +200,20 @@ with gr.Blocks(theme="soft", css=CSS, fill_height=True) as demo:
                 value="OpenAI",
                 visible=False,
             )
-            model2 = gr.Textbox(label="Model 2", value="gpt-4o", visible=False, )
+            model2 = gr.Textbox(label="Model 2", value="gpt-4o", visible=False,)
             api_key2 = gr.Textbox(label="API_KEY 2", type="password", visible=False,)
-            source_lang = gr.Textbox(
-                label="Source Lang",
-                value="English",
-            )
-            target_lang = gr.Textbox(
-                label="Target Lang",
-                value="Spanish",
-            )
+            with gr.Row():
+                source_lang = gr.Textbox(
+                    label="Source Lang",
+                    value="English",
+                    elem_classes = "lang",
+                )
+                target_lang = gr.Textbox(
+                    label="Target Lang",
+                    value="Spanish",
+                    elem_classes = "lang",
+                )
+            switchBtn = gr.Button(value="🔄️")
             country = gr.Textbox(label="Country", value="Argentina", max_lines=1)
             with gr.Accordion("Advanced Options", open=False):
                 max_tokens = gr.Slider(
@@ -223,6 +237,13 @@ with gr.Blocks(theme="soft", css=CSS, fill_height=True) as demo:
                     value=512,
                     step=8,
                     )
+                rpm = gr.Slider(
+                    label="Request Per Minute",
+                    minimum=1,
+                    maximum=1000,
+                    value=60,
+                    step=1,
+                    )
         with gr.Column(scale=4):
             source_text = gr.Textbox(
                 label="Source Text",
@@ -245,11 +266,12 @@ with gr.Blocks(theme="soft", css=CSS, fill_height=True) as demo:
         export = gr.DownloadButton(visible=False)
         clear = gr.ClearButton([source_text, output_init, output_reflect, output_final])
 
+    switchBtn.click(fn=switch, inputs=[source_lang,source_text,target_lang,output_final], outputs=[source_lang,source_text,target_lang,output_final])
     menuBtn.click(fn=update_menu, inputs=visible, outputs=[visible, menubar], js=JS)
     endpoint.change(fn=update_model, inputs=[endpoint], outputs=[model])
     choice.select(fn=enable_sec, inputs=[choice], outputs=[endpoint2, model2, api_key2])
     endpoint2.change(fn=update_model, inputs=[endpoint2], outputs=[model2])
-    submit.click(fn=huanik, inputs=[endpoint, model, api_key, choice, endpoint2, model2, api_key2, source_lang, target_lang, source_text, country, max_tokens, context_window, num_output], outputs=[output_init, output_reflect, output_final, output_diff])
+    submit.click(fn=huanik, inputs=[endpoint, model, api_key, choice, endpoint2, model2, api_key2, source_lang, target_lang, source_text, country, max_tokens, context_window, num_output, rpm], outputs=[output_init, output_reflect, output_final, output_diff])
     upload.upload(fn=read_doc, inputs = upload, outputs = source_text)
     output_final.change(fn=export_txt, inputs=output_final, outputs=[export])
 if __name__ == "__main__":
