@@ -7,6 +7,8 @@ from app.webui.patch import calculate_chunk_size, multichunk_initial_translation
 
 from llama_index.core.node_parser import SentenceSplitter
 
+progress=gr.Progress()
+
 def tokenize(text):
     # Use nltk to tokenize the text
     words = simple_tokenizer(text)
@@ -52,7 +54,6 @@ def translator(
         country: str,
         max_tokens:int = 1000,
 ):
-
     """Translate the source_text from source_lang to target_lang."""
     num_tokens_in_text = num_tokens_in_string(source_text)
 
@@ -61,16 +62,17 @@ def translator(
     if num_tokens_in_text < max_tokens:
         ic("Translating text as single chunk")
 
-        #Note: use yield from B() if put yield in function B()
+        progress((1,3), desc="First translation...")
         init_translation = one_chunk_initial_translation(
             source_lang, target_lang, source_text
         )
 
-
+        progress((2,3), desc="Reflecton...")
         reflection = one_chunk_reflect_on_translation(
             source_lang, target_lang, source_text, init_translation, country
         )
 
+        progress((3,3), desc="Second translation...")
         final_translation = one_chunk_improve_translation(
             source_lang, target_lang, source_text, init_translation, reflection
         )
@@ -80,6 +82,7 @@ def translator(
     else:
         ic("Translating text as multiple chunks")
 
+        progress((1,5), desc="Calculate chunk size...")
         token_size = calculate_chunk_size(
             token_count=num_tokens_in_text, token_limit=max_tokens
         )
@@ -91,14 +94,17 @@ def translator(
            chunk_size=token_size,
         )
 
+        progress((2,5), desc="Spilt source text...")
         source_text_chunks = text_parser.split_text(source_text)
 
+        progress((3,5), desc="First translation...")
         translation_1_chunks = multichunk_initial_translation(
             source_lang, target_lang, source_text_chunks
         )
 
         init_translation = "".join(translation_1_chunks)
 
+        progress((4,5), desc="Reflection...")
         reflection_chunks = multichunk_reflect_on_translation(
             source_lang,
             target_lang,
@@ -109,6 +115,7 @@ def translator(
 
         reflection = "".join(reflection_chunks)
 
+        progress((5,5), desc="Second translation...")
         translation_2_chunks = multichunk_improve_translation(
             source_lang,
             target_lang,
@@ -143,7 +150,7 @@ def translator_sec(
     if num_tokens_in_text < max_tokens:
         ic("Translating text as single chunk")
 
-        #Note: use yield from B() if put yield in function B()
+        progress((1,3), desc="First translation...")
         init_translation = one_chunk_initial_translation(
             source_lang, target_lang, source_text
         )
@@ -153,10 +160,12 @@ def translator_sec(
         except Exception as e:
             raise gr.Error(f"An unexpected error occurred: {e}")
 
+        progress((2,3), desc="Reflecton...")
         reflection = one_chunk_reflect_on_translation(
             source_lang, target_lang, source_text, init_translation, country
         )
 
+        progress((3,3), desc="Second translation...")
         final_translation = one_chunk_improve_translation(
             source_lang, target_lang, source_text, init_translation, reflection
         )
@@ -166,6 +175,7 @@ def translator_sec(
     else:
         ic("Translating text as multiple chunks")
 
+        progress((1,5), desc="Calculate chunk size...")
         token_size = calculate_chunk_size(
             token_count=num_tokens_in_text, token_limit=max_tokens
         )
@@ -177,8 +187,10 @@ def translator_sec(
            chunk_size=token_size,
         )
 
+        progress((2,5), desc="Spilt source text...")
         source_text_chunks = text_parser.split_text(source_text)
 
+        progress((3,5), desc="First translation...")
         translation_1_chunks = multichunk_initial_translation(
             source_lang, target_lang, source_text_chunks
         )
@@ -190,6 +202,7 @@ def translator_sec(
         except Exception as e:
             raise gr.Error(f"An unexpected error occurred: {e}")
 
+        progress((4,5), desc="Reflection...")
         reflection_chunks = multichunk_reflect_on_translation(
             source_lang,
             target_lang,
@@ -200,6 +213,7 @@ def translator_sec(
 
         reflection = "".join(reflection_chunks)
 
+        progress((5,5), desc="Second translation...")
         translation_2_chunks = multichunk_improve_translation(
             source_lang,
             target_lang,
