@@ -520,7 +520,7 @@ def multichunk_improve_translation(
     system_message = f"You are an expert linguist, specializing in translation editing from {source_lang} to {target_lang}."
 
     improvement_prompt = """Your task is to carefully read, then improve, a translation from {source_lang} to {target_lang}, taking into
-account a set of expert suggestions and constructive critisms. Below, the source text, initial translation, and expert suggestions are provided.
+account a set of expert suggestions and constructive criticisms. Below, the source text, initial translation, and expert suggestions are provided.
 
 The source text is below, delimited by XML tags <SOURCE_TEXT> and </SOURCE_TEXT>, and the part that has been translated
 is delimited by <TRANSLATE_THIS> and </TRANSLATE_THIS> within the source text. You can use the rest of the source text
