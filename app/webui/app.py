@@ -93,9 +93,9 @@ def read_doc(file):
 
 def enable_sec(choice):
     if choice:
-        return gr.update(visible = True), gr.update(visible = True), gr.update(visible = True)
+        return gr.update(visible = True)
     else:
-        return gr.update(visible = False), gr.update(visible = False), gr.update(visible = False)
+        return gr.update(visible = False)
 
 def update_menu(visible):
     return not visible, gr.update(visible=not visible)
@@ -113,6 +113,13 @@ def switch(source_lang,source_text,target_lang,output_final):
         return gr.update(value=target_lang), gr.update(value=output_final), gr.update(value=source_lang), gr.update(value=source_text)
     else:
         return gr.update(value=target_lang), gr.update(value=source_text), gr.update(value=source_lang), gr.update(value="")
+
+def closeBtnShow():
+    return gr.update(visible=False), gr.update(visible=True)
+
+def closeBtnHide(output_final):
+    if output_final:
+        return gr.update(visible=True), gr.update(visible=False)
 
 TITLE = """
     <div style="display: inline-flex;">
@@ -191,17 +198,17 @@ with gr.Blocks(theme="soft", css=CSS, fill_height=True) as demo:
                 choices=["Groq","OpenAI","Cohere","TogetherAI","Ollama","Huggingface"],
                 value="OpenAI",
             )
-            choice = gr.Checkbox(label="Second Endpoint", info="Add second endpoint for reflection")
+            choice = gr.Checkbox(label="Additional Endpoint", info="Additional endpoint for reflection")
             model = gr.Textbox(label="Model", value="gpt-4o", )
             api_key = gr.Textbox(label="API_KEY", type="password", )
-            endpoint2 = gr.Dropdown(
-                label="Endpoint 2",
-                choices=["Groq","OpenAI","Cohere","TogetherAI","Ollama","Huggingface"],
-                value="OpenAI",
-                visible=False,
-            )
-            model2 = gr.Textbox(label="Model 2", value="gpt-4o", visible=False,)
-            api_key2 = gr.Textbox(label="API_KEY 2", type="password", visible=False,)
+            with gr.Column(visible=False) as AddEndpoint:
+                endpoint2 = gr.Dropdown(
+                    label="Additional Endpoint",
+                    choices=["Groq","OpenAI","Cohere","TogetherAI","Ollama","Huggingface"],
+                    value="OpenAI",
+                )
+                model2 = gr.Textbox(label="Model", value="gpt-4o", )
+                api_key2 = gr.Textbox(label="API_KEY", type="password", )
             with gr.Row():
                 source_lang = gr.Textbox(
                     label="Source Lang",
@@ -265,14 +272,23 @@ with gr.Blocks(theme="soft", css=CSS, fill_height=True) as demo:
         upload = gr.UploadButton(label="Upload", file_types=["text"])
         export = gr.DownloadButton(visible=False)
         clear = gr.ClearButton([source_text, output_init, output_reflect, output_final])
+        close = gr.Button(value="Stop", visible=False)
 
     switchBtn.click(fn=switch, inputs=[source_lang,source_text,target_lang,output_final], outputs=[source_lang,source_text,target_lang,output_final])
+    
     menuBtn.click(fn=update_menu, inputs=visible, outputs=[visible, menubar], js=JS)
     endpoint.change(fn=update_model, inputs=[endpoint], outputs=[model])
-    choice.select(fn=enable_sec, inputs=[choice], outputs=[endpoint2, model2, api_key2])
+    
+    choice.select(fn=enable_sec, inputs=[choice], outputs=[AddEndpoint])
     endpoint2.change(fn=update_model, inputs=[endpoint2], outputs=[model2])
-    submit.click(fn=huanik, inputs=[endpoint, model, api_key, choice, endpoint2, model2, api_key2, source_lang, target_lang, source_text, country, max_tokens, context_window, num_output, rpm], outputs=[output_init, output_reflect, output_final, output_diff])
+   
+    start_ta = submit.click(fn=huanik, inputs=[endpoint, model, api_key, choice, endpoint2, model2, api_key2, source_lang, target_lang, source_text, country, max_tokens, context_window, num_output, rpm], outputs=[output_init, output_reflect, output_final, output_diff])
     upload.upload(fn=read_doc, inputs = upload, outputs = source_text)
     output_final.change(fn=export_txt, inputs=output_final, outputs=[export])
+
+    submit.click(fn=closeBtnShow, outputs=[clear, close])
+    output_final.change(fn=closeBtnHide, inputs=output_final, outputs=[clear, close])
+    close.click(fn=None, cancels=start_ta)
+
 if __name__ == "__main__":
     demo.queue(api_open=False).launch(show_api=False, share=False)

@@ -121,12 +121,14 @@ def get_completion(
                 ChatMessage(
                     role="user", content=prompt),
             ]
-
-            response = llm.chat(
-                messages=messages,
-                temperature=temperature,
-            )
-            return response.message.content
+            try:
+                response = llm.chat(
+                    messages=messages,
+                    temperature=temperature,
+                )
+                return response.message.content
+            except Exception as e:
+                raise gr.Error(f"An unexpected error occurred: {e}")
         else:
             messages = [
                 ChatMessage(
@@ -143,11 +145,14 @@ def get_completion(
                 )
                 return response.message.content
             else:
-                response = llm.chat(
-                    temperature=temperature,
-                    messages=messages,
-                )
-                return response.message.content
+                try:
+                    response = llm.chat(
+                        temperature=temperature,
+                        messages=messages,
+                    )
+                    return response.message.content
+                except Exception as e:
+                    raise gr.Error(f"An unexpected error occurred: {e}")
 
 utils.get_completion = get_completion
 

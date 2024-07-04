@@ -70,7 +70,7 @@ Llama Index supported, easily extendable
 
 1. Select your desired translation API from the Endpoint dropdown menu.
 2. Input the source language, target language, and country(optional).
-3. If using Hugging Face API, enter your `HF_TOKEN` in the `api_key` textbox.
+3. If using Hugging Face API, enter your `HF_TOKEN` in the `api_key` textbox, enter `MODEL_ID` or `HF_ENDPOINT_URL` in `Model`  textbox.
 4. Input the source text or upload your document file.
 5. Submit and get translation, the UI will display the translated text with tokenization and highlight differences.
 6. Enable Second Endpoint, you can add another endpoint by different LLMs for reflection.
