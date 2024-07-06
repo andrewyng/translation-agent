@@ -149,6 +149,7 @@ def translator(
 
 def translator_sec(
         endpoint2: str,
+        base2: str,
         model2: str,
         api_key2: str,
         source_lang: str,
@@ -172,7 +173,7 @@ def translator_sec(
         )
 
         try:
-            model_load(endpoint2, model2, api_key2)
+            model_load(endpoint2, base2, model2, api_key2)
         except Exception as e:
             raise gr.Error(f"An unexpected error occurred: {e}")
 
@@ -213,7 +214,7 @@ def translator_sec(
         init_translation = "".join(translation_1_chunks)
 
         try:
-            model_load(endpoint2, model2, api_key2)
+            model_load(endpoint2, base2, model2, api_key2)
         except Exception as e:
             raise gr.Error(f"An unexpected error occurred: {e}")
 

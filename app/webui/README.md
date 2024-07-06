@@ -1,7 +1,7 @@
 
 ## Translation Agent WebUI
 
-A Gradio Web UI for translation agent.
+This repository contains a Gradio web UI for a translation agent that utilizes various language models for translation.
 
 ### Preview
 
@@ -72,6 +72,7 @@ A Gradio Web UI for translation agent.
 3. Input the source text or upload your document file.
 4. Submit and get translation, the UI will display the translated text with tokenization and highlight differences.
 5. Enable Second Endpoint, you can add another endpoint by different LLMs for reflection.
+6. Using a custom endpoint, you can enter an OpenAI compatible API base url.
 
 **Customization:**
 

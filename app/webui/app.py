@@ -6,10 +6,12 @@ from process import model_load, diff_texts, translator, translator_sec, extract_
 
 def huanik(
     endpoint: str,
+    base: str,
     model: str,
     api_key: str,
     choice: str,
     endpoint2: str,
+    base2: str,
     model2: str,
     api_key2: str,
     source_lang: str,
@@ -25,7 +27,7 @@ def huanik(
         raise gr.Error("Please check that the content or options are entered correctly.")
 
     try:
-        model_load(endpoint, model, api_key, temperature, rpm)
+        model_load(endpoint, base, model, api_key, temperature, rpm)
     except Exception as e:
         raise gr.Error(f"An unexpected error occurred: {e}")
 
@@ -34,6 +36,7 @@ def huanik(
     if choice:
         init_translation, reflect_translation, final_translation = translator_sec(
             endpoint2=endpoint2,
+            base2=base2,
             model2=model2,
             api_key2=api_key2,
             source_lang=source_lang,
@@ -68,8 +71,13 @@ def update_model(endpoint):
         "OpenAI": "gpt-4o",
         "TogetherAI": "Qwen/Qwen2-72B-Instruct",
         "Ollama": "llama3",
+        "CUSTOM": "",
     }
-    return gr.update(value=endpoint_model_map[endpoint])
+    if endpoint == "CUSTOM":
+        base = gr.update(visible=True)
+    else:
+        base = gr.update(visible=False)
+    return gr.update(value=endpoint_model_map[endpoint]), base
 
 def read_doc(path):
     file_type = path.split(".")[-1]
@@ -189,20 +197,22 @@ with gr.Blocks(theme="soft", css=CSS, fill_height=True) as demo:
         with gr.Column(scale=1) as menubar:
             endpoint = gr.Dropdown(
                 label="Endpoint",
-                choices=["Groq","OpenAI","TogetherAI","Ollama"],
+                choices=["OpenAI","Groq","TogetherAI","Ollama","CUSTOM"],
                 value="OpenAI",
             )
             choice = gr.Checkbox(label="Additional Endpoint", info="Additional endpoint for reflection")
             model = gr.Textbox(label="Model", value="gpt-4o", )
             api_key = gr.Textbox(label="API_KEY", type="password", )
+            base = gr.Textbox(label="BASE URL", visible=False)
             with gr.Column(visible=False) as AddEndpoint:
                 endpoint2 = gr.Dropdown(
                     label="Additional Endpoint",
-                    choices=["Groq","OpenAI","TogetherAI","Ollama"],
+                    choices=["OpenAI","Groq","TogetherAI","Ollama","CUSTOM"],
                     value="OpenAI",
                 )
                 model2 = gr.Textbox(label="Model", value="gpt-4o", )
                 api_key2 = gr.Textbox(label="API_KEY", type="password", )
+                base2 = gr.Textbox(label="BASE URL", visible=False)
             with gr.Row():
                 source_lang = gr.Textbox(
                     label="Source Lang",
@@ -268,12 +278,12 @@ with gr.Blocks(theme="soft", css=CSS, fill_height=True) as demo:
     switchBtn.click(fn=switch, inputs=[source_lang,source_text,target_lang,output_final], outputs=[source_lang,source_text,target_lang,output_final])
 
     menuBtn.click(fn=update_menu, inputs=visible, outputs=[visible, menubar], js=JS)
-    endpoint.change(fn=update_model, inputs=[endpoint], outputs=[model])
+    endpoint.change(fn=update_model, inputs=[endpoint], outputs=[model, base])
 
     choice.select(fn=enable_sec, inputs=[choice], outputs=[AddEndpoint])
-    endpoint2.change(fn=update_model, inputs=[endpoint2], outputs=[model2])
+    endpoint2.change(fn=update_model, inputs=[endpoint2], outputs=[model2, base2])
 
-    start_ta = submit.click(fn=huanik, inputs=[endpoint, model, api_key, choice, endpoint2, model2, api_key2, source_lang, target_lang, source_text, country, max_tokens, temperature, rpm], outputs=[output_init, output_reflect, output_final, output_diff])
+    start_ta = submit.click(fn=huanik, inputs=[endpoint, base, model, api_key, choice, endpoint2, base2, model2, api_key2, source_lang, target_lang, source_text, country, max_tokens, temperature, rpm], outputs=[output_init, output_reflect, output_final, output_diff])
     upload.upload(fn=read_doc, inputs = upload, outputs = source_text)
     output_final.change(fn=export_txt, inputs=output_final, outputs=[export])
 
