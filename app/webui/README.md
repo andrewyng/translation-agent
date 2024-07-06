@@ -1,7 +1,7 @@
 
 ## Translation Agent WebUI
 
-This repository contains a Gradio web UI for a translation agent that utilizes various language models for translation.
+A Gradio Web UI for translation agent.
 
 ### Preview
 
@@ -14,35 +14,30 @@ This repository contains a Gradio web UI for a translation agent that utilizes v
 - **Multiple API Support:**  Integrates with popular language models like:
     - Groq
     - OpenAI
-    - Cohere
     - Ollama
     - Together AI
-    - Hugging Face Inference API
     ...
-Llama Index supported, easily extendable
 - **Different LLM for reflection**: Now you can enable second Endpoint to use another LLM for reflection.
 
 
 **Getting Started**
 
-1. **Install Dependencies(Using Python Venv):**
+1. **Install Dependencies:**
 
     **Linux**
     ```bash
         git clone https://github.com/andrewyng/translation-agent.git
         cd translation-agent
-        python -m venv web_ui
-        source web_ui/bin/activate
-        pip install -r app/webui/requirements.txt
-
+        poetry install --with app
+        poetry shell
     ```
     **Windows**
     ```bash
         git clone https://github.com/andrewyng/translation-agent.git
         cd translation-agent
-        python -m venv web_ui
-        .\web_ui\Scripts\activate
-        pip install -r app/webui/requirements.txt
+        poetry install --with app
+        poetry shell
+        python .\app\webui\app.py
 
     ```
 
@@ -52,15 +47,19 @@ Llama Index supported, easily extendable
      ```
      OPENAI_API_KEY="sk-xxxxx" # Keep this field
      GROQ_API_KEY="xxxxx"
-     COHERE_API_KEY="xxxxx"
      TOGETHER_API_KEY="xxxxx"
-     HF_TOKEN="xxxxx"
      ```
     - Then you can also set the API_KEY in webui.
 
 3. **Run the Web UI:**
+
+    **Linux**
     ```bash
-    python -m app.webui.app
+    python app/webui/app.py
+    ```
+    **Windows**
+    ```bash
+    python .\app\webui\app.py
     ```
 
 4. **Access the Web UI:**
@@ -70,10 +69,9 @@ Llama Index supported, easily extendable
 
 1. Select your desired translation API from the Endpoint dropdown menu.
 2. Input the source language, target language, and country(optional).
-3. If using Hugging Face API, enter your `HF_TOKEN` in the `api_key` textbox, enter `MODEL_ID` or `HF_ENDPOINT_URL` in `Model`  textbox.
-4. Input the source text or upload your document file.
-5. Submit and get translation, the UI will display the translated text with tokenization and highlight differences.
-6. Enable Second Endpoint, you can add another endpoint by different LLMs for reflection.
+3. Input the source text or upload your document file.
+4. Submit and get translation, the UI will display the translated text with tokenization and highlight differences.
+5. Enable Second Endpoint, you can add another endpoint by different LLMs for reflection.
 
 **Customization:**
 

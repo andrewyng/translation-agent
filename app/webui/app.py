@@ -1,15 +1,8 @@
-import sys
 import os
-
-# Add the project root to the Python path
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
-sys.path.insert(0, project_root)
-
 import re
 import gradio as gr
 from glob import glob
-from app.webui.process import model_load, diff_texts, translator, translator_sec
-from llama_index.core import SimpleDirectoryReader
+from process import model_load, diff_texts, translator, translator_sec, extract_docx, extract_pdf, extract_text
 
 def huanik(
     endpoint: str,
@@ -24,8 +17,7 @@ def huanik(
     source_text: str,
     country: str,
     max_tokens: int,
-    context_window: int,
-    num_output: int,
+    temperature: int,
     rpm: int,
 ):
 
@@ -33,7 +25,7 @@ def huanik(
         raise gr.Error("Please check that the content or options are entered correctly.")
 
     try:
-        model_load(endpoint, model, api_key, context_window, num_output, rpm)
+        model_load(endpoint, model, api_key, temperature, rpm)
     except Exception as e:
         raise gr.Error(f"An unexpected error occurred: {e}")
 
@@ -44,8 +36,6 @@ def huanik(
             endpoint2=endpoint2,
             model2=model2,
             api_key2=api_key2,
-            context_window=context_window,
-            num_output=num_output,
             source_lang=source_lang,
             target_lang=target_lang,
             source_text=source_text,
@@ -76,20 +66,24 @@ def update_model(endpoint):
     endpoint_model_map = {
         "Groq": "llama3-70b-8192",
         "OpenAI": "gpt-4o",
-        "Cohere": "command-r",
         "TogetherAI": "Qwen/Qwen2-72B-Instruct",
         "Ollama": "llama3",
-        "Huggingface": "mistralai/Mistral-7B-Instruct-v0.3"
     }
     return gr.update(value=endpoint_model_map[endpoint])
 
-def read_doc(file):
-    docs = SimpleDirectoryReader(input_files=[file]).load_data()
-    texts = ""
-    for doc in docs:
-        texts += doc.text
-    texts = re.sub(r'(?m)^\s*$\n?', '', texts)
-    return texts
+def read_doc(path):
+    file_type = path.split(".")[-1]
+    print(file_type)
+    if file_type in ["pdf", "txt", "py", "docx", "json", "cpp", "md"]:
+        if file_type.endswith("pdf"):
+            content = extract_pdf(path)
+        elif file_type.endswith("docx"):
+            content = extract_docx(path)
+        else:
+            content = extract_text(path)
+        return re.sub(r'(?m)^\s*$\n?', '', content)
+    else:
+        raise gr.Error("Oops, unsupported files.")
 
 def enable_sec(choice):
     if choice:
@@ -195,7 +189,7 @@ with gr.Blocks(theme="soft", css=CSS, fill_height=True) as demo:
         with gr.Column(scale=1) as menubar:
             endpoint = gr.Dropdown(
                 label="Endpoint",
-                choices=["Groq","OpenAI","Cohere","TogetherAI","Ollama","Huggingface"],
+                choices=["Groq","OpenAI","TogetherAI","Ollama"],
                 value="OpenAI",
             )
             choice = gr.Checkbox(label="Additional Endpoint", info="Additional endpoint for reflection")
@@ -204,7 +198,7 @@ with gr.Blocks(theme="soft", css=CSS, fill_height=True) as demo:
             with gr.Column(visible=False) as AddEndpoint:
                 endpoint2 = gr.Dropdown(
                     label="Additional Endpoint",
-                    choices=["Groq","OpenAI","Cohere","TogetherAI","Ollama","Huggingface"],
+                    choices=["Groq","OpenAI","TogetherAI","Ollama"],
                     value="OpenAI",
                 )
                 model2 = gr.Textbox(label="Model", value="gpt-4o", )
@@ -230,19 +224,12 @@ with gr.Blocks(theme="soft", css=CSS, fill_height=True) as demo:
                     value=1000,
                     step=8,
                     )
-                context_window = gr.Slider(
-                    label="Context Window",
-                    minimum=512,
-                    maximum=8192,
-                    value=4096,
-                    step=8,
-                    )
-                num_output = gr.Slider(
-                    label="Output Num",
-                    minimum=256,
-                    maximum=8192,
-                    value=512,
-                    step=8,
+                temperature = gr.Slider(
+                    label="Temperature",
+                    minimum=0,
+                    maximum=1.0,
+                    value=0.3,
+                    step=0.1,
                     )
                 rpm = gr.Slider(
                     label="Request Per Minute",
@@ -251,6 +238,10 @@ with gr.Blocks(theme="soft", css=CSS, fill_height=True) as demo:
                     value=60,
                     step=1,
                     )
+                # json_mode = gr.Checkbox(
+                #     False,
+                #     label="Json Mode",
+                #     )
         with gr.Column(scale=4):
             source_text = gr.Textbox(
                 label="Source Text",
@@ -275,14 +266,14 @@ with gr.Blocks(theme="soft", css=CSS, fill_height=True) as demo:
         close = gr.Button(value="Stop", visible=False)
 
     switchBtn.click(fn=switch, inputs=[source_lang,source_text,target_lang,output_final], outputs=[source_lang,source_text,target_lang,output_final])
-    
+
     menuBtn.click(fn=update_menu, inputs=visible, outputs=[visible, menubar], js=JS)
     endpoint.change(fn=update_model, inputs=[endpoint], outputs=[model])
-    
+
     choice.select(fn=enable_sec, inputs=[choice], outputs=[AddEndpoint])
     endpoint2.change(fn=update_model, inputs=[endpoint2], outputs=[model2])
-   
-    start_ta = submit.click(fn=huanik, inputs=[endpoint, model, api_key, choice, endpoint2, model2, api_key2, source_lang, target_lang, source_text, country, max_tokens, context_window, num_output, rpm], outputs=[output_init, output_reflect, output_final, output_diff])
+
+    start_ta = submit.click(fn=huanik, inputs=[endpoint, model, api_key, choice, endpoint2, model2, api_key2, source_lang, target_lang, source_text, country, max_tokens, temperature, rpm], outputs=[output_init, output_reflect, output_final, output_diff])
     upload.upload(fn=read_doc, inputs = upload, outputs = source_text)
     output_final.change(fn=export_txt, inputs=output_final, outputs=[export])
 

@@ -6,7 +6,10 @@ authors = ["Andrew Ng <ng@deeplearning.ai>"]
 license = "MIT"
 readme = "README.md"
 package-mode = true
-packages = [{ include = "translation_agent", from = "src" }]
+packages = [
+    { include = "translation_agent", from = "src" },
+    { include = "webui", from = "app" },
+    ]
 repository = "https://github.com/andrewyng/translation-agent"
 keywords = ["translation", "agents", "LLM", "machine translation"]
 
@@ -20,6 +23,15 @@ pysrt = "^1.1.2"
 icecream = "^2.1.3"
 langchain-text-splitters = "^0.0.1"
 python-dotenv = "^1.0.1"
+
+[tool.poetry.group.app.dependencies]
+simplemma = "^1.0.0"
+gradio = "4.37.2"
+python-docx = "^1.1.2"
+PyMuPDF = "^1.24.7"
+groq = "^0.9.0"
+ollama = "^0.2.1"
+together = "^1.2.1"
 
 [tool.poetry.group.dev]
 optional = true

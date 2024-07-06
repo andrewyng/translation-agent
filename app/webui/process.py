@@ -2,12 +2,31 @@ import gradio as gr
 from simplemma import simple_tokenizer
 from difflib import Differ
 from icecream import ic
-from app.webui.patch import model_load,num_tokens_in_string,one_chunk_initial_translation, one_chunk_reflect_on_translation, one_chunk_improve_translation
-from app.webui.patch import calculate_chunk_size, multichunk_initial_translation, multichunk_reflect_on_translation, multichunk_improve_translation
-
-from llama_index.core.node_parser import SentenceSplitter
+from patch import model_load,num_tokens_in_string,one_chunk_initial_translation, one_chunk_reflect_on_translation, one_chunk_improve_translation
+from patch import calculate_chunk_size, multichunk_initial_translation, multichunk_reflect_on_translation, multichunk_improve_translation
+import pymupdf
+import docx
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 progress=gr.Progress()
+
+def extract_text(path):
+    return open(path, 'r').read()
+
+def extract_pdf(path):
+    doc = pymupdf.open(path)
+    text = ""
+    for page in doc:
+        text += page.get_text()
+    return text
+
+def extract_docx(path):
+    doc = docx.Document(path)
+    data = []
+    for paragraph in doc.paragraphs:
+        data.append(paragraph.text)
+    content = '\n\n'.join(data)
+    return content
 
 def tokenize(text):
     # Use nltk to tokenize the text
@@ -82,29 +101,28 @@ def translator(
     else:
         ic("Translating text as multiple chunks")
 
-        progress((1,5), desc="Calculate chunk size...")
         token_size = calculate_chunk_size(
             token_count=num_tokens_in_text, token_limit=max_tokens
         )
 
         ic(token_size)
 
-        #using sentence splitter
-        text_parser = SentenceSplitter(
-           chunk_size=token_size,
+        text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
+            model_name="gpt-4",
+            chunk_size=token_size,
+            chunk_overlap=0,
         )
 
-        progress((2,5), desc="Spilt source text...")
-        source_text_chunks = text_parser.split_text(source_text)
+        source_text_chunks = text_splitter.split_text(source_text)
 
-        progress((3,5), desc="First translation...")
+        progress((1,3), desc="First translation...")
         translation_1_chunks = multichunk_initial_translation(
             source_lang, target_lang, source_text_chunks
         )
 
         init_translation = "".join(translation_1_chunks)
 
-        progress((4,5), desc="Reflection...")
+        progress((2,3), desc="Reflection...")
         reflection_chunks = multichunk_reflect_on_translation(
             source_lang,
             target_lang,
@@ -115,7 +133,7 @@ def translator(
 
         reflection = "".join(reflection_chunks)
 
-        progress((5,5), desc="Second translation...")
+        progress((3,3), desc="Second translation...")
         translation_2_chunks = multichunk_improve_translation(
             source_lang,
             target_lang,
@@ -133,8 +151,6 @@ def translator_sec(
         endpoint2: str,
         model2: str,
         api_key2: str,
-        context_window: int,
-        num_output: int,
         source_lang: str,
         target_lang: str,
         source_text: str,
@@ -156,7 +172,7 @@ def translator_sec(
         )
 
         try:
-            model_load(endpoint2, model2, api_key2, context_window, num_output)
+            model_load(endpoint2, model2, api_key2)
         except Exception as e:
             raise gr.Error(f"An unexpected error occurred: {e}")
 
@@ -175,22 +191,21 @@ def translator_sec(
     else:
         ic("Translating text as multiple chunks")
 
-        progress((1,5), desc="Calculate chunk size...")
         token_size = calculate_chunk_size(
             token_count=num_tokens_in_text, token_limit=max_tokens
         )
 
         ic(token_size)
 
-        #using sentence splitter
-        text_parser = SentenceSplitter(
-           chunk_size=token_size,
+        text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
+            model_name="gpt-4",
+            chunk_size=token_size,
+            chunk_overlap=0,
         )
 
-        progress((2,5), desc="Spilt source text...")
-        source_text_chunks = text_parser.split_text(source_text)
+        source_text_chunks = text_splitter.split_text(source_text)
 
-        progress((3,5), desc="First translation...")
+        progress((1,3), desc="First translation...")
         translation_1_chunks = multichunk_initial_translation(
             source_lang, target_lang, source_text_chunks
         )
@@ -198,11 +213,11 @@ def translator_sec(
         init_translation = "".join(translation_1_chunks)
 
         try:
-            model_load(endpoint2, model2, api_key2, context_window, num_output)
+            model_load(endpoint2, model2, api_key2)
         except Exception as e:
             raise gr.Error(f"An unexpected error occurred: {e}")
 
-        progress((4,5), desc="Reflection...")
+        progress((2,3), desc="Reflection...")
         reflection_chunks = multichunk_reflect_on_translation(
             source_lang,
             target_lang,
@@ -213,7 +228,7 @@ def translator_sec(
 
         reflection = "".join(reflection_chunks)
 
-        progress((5,5), desc="Second translation...")
+        progress((3,3), desc="Second translation...")
         translation_2_chunks = multichunk_improve_translation(
             source_lang,
             target_lang,
