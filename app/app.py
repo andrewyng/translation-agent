@@ -3,13 +3,15 @@ import re
 from glob import glob
 
 import gradio as gr
-from process import diff_texts
-from process import extract_docx
-from process import extract_pdf
-from process import extract_text
-from process import model_load
-from process import translator
-from process import translator_sec
+from process import (
+    diff_texts,
+    extract_docx,
+    extract_pdf,
+    extract_text,
+    model_load,
+    translator,
+    translator_sec,
+)
 
 
 def huanik(

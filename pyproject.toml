@@ -8,7 +8,6 @@ readme = "README.md"
 package-mode = true
 packages = [
     { include = "translation_agent", from = "src" },
-    { include = "webui", from = "app" },
     ]
 repository = "https://github.com/andrewyng/translation-agent"
 keywords = ["translation", "agents", "LLM", "machine translation"]
@@ -76,7 +75,7 @@ priority = "supplemental"
 # Set the maximum line length to 79.
 line-length = 79
 indent-width = 4
-exclude = [".venv", ".env", ".git", "tests", "eval"]
+exclude = [".venv", ".env", ".git", "tests", "eval", ".jj"]
 
 [tool.ruff.lint]
 # Add the `line-too-long` rule to the enforced rule set. By default, Ruff omits rules that
@@ -101,7 +100,7 @@ fixable = ["ALL"]
 ignore = ["SIM117"]
 
 [tool.ruff.lint.isort]
-force-single-line = true
+force-single-line = false
 lines-after-imports = 2
 known-first-party = ["translation-agent"]
 

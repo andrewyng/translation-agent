@@ -2,8 +2,7 @@ import os
 import time
 from functools import wraps
 from threading import Lock
-from typing import Optional
-from typing import Union
+from typing import Optional, Union
 
 import gradio as gr
 import openai

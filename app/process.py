@@ -5,15 +5,17 @@ import gradio as gr
 import pymupdf
 from icecream import ic
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from patch import calculate_chunk_size
-from patch import model_load
-from patch import multichunk_improve_translation
-from patch import multichunk_initial_translation
-from patch import multichunk_reflect_on_translation
-from patch import num_tokens_in_string
-from patch import one_chunk_improve_translation
-from patch import one_chunk_initial_translation
-from patch import one_chunk_reflect_on_translation
+from patch import (
+    calculate_chunk_size,
+    model_load,
+    multichunk_improve_translation,
+    multichunk_initial_translation,
+    multichunk_reflect_on_translation,
+    num_tokens_in_string,
+    one_chunk_improve_translation,
+    one_chunk_initial_translation,
+    one_chunk_reflect_on_translation,
+)
 from simplemma import simple_tokenizer
 
 
