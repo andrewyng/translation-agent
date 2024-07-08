@@ -132,6 +132,7 @@ def export_txt(strings):
     else:
         return gr.update(visible=False)
 
+
 def switch(source_lang, source_text, target_lang, output_final):
     if output_final:
         return (
@@ -314,9 +315,7 @@ with gr.Blocks(theme="soft", css=CSS, fill_height=True) as demo:
         with gr.Column(scale=4):
             source_text = gr.Textbox(
                 label="Source Text",
-                value="How we live is so different from how we ought to live that he who studies "
-                + "what ought to be done rather than what is done will learn the way to his downfall "
-                + "rather than to his preservation.",
+                value="If one advances confidently in the direction of his dreams, and endeavors to live the life which he has imagined, he will meet with a success unexpected in common hours.",
                 lines=12,
             )
             with gr.Tab("Final"):

@@ -6,9 +6,7 @@ authors = ["Andrew Ng <ng@deeplearning.ai>"]
 license = "MIT"
 readme = "README.md"
 package-mode = true
-packages = [
-    { include = "translation_agent", from = "src" },
-    ]
+packages = [{ include = "translation_agent", from = "src" }]
 repository = "https://github.com/andrewyng/translation-agent"
 keywords = ["translation", "agents", "LLM", "machine translation"]
 

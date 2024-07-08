@@ -15,7 +15,6 @@ TEMPERATURE = 0.3
 # Hide js_mode in UI now, update in plan.
 JS_MODE = False
 ENDPOINT = ""
-client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 
 # Add your LLMs here
@@ -35,26 +34,29 @@ def model_load(
     TEMPERATURE = temperature
     JS_MODE = js_mode
 
-    if endpoint == "Groq":
-        client = openai.OpenAI(
-            api_key=api_key if api_key else os.getenv("GROQ_API_KEY"),
-            base_url="https://api.groq.com/openai/v1",
-        )
-    elif endpoint == "TogetherAI":
-        client = openai.OpenAI(
-            api_key=api_key if api_key else os.getenv("TOGETHER_API_KEY"),
-            base_url="https://api.together.xyz/v1",
-        )
-    elif endpoint == "CUSTOM":
-        client = openai.OpenAI(api_key=api_key, base_url=base_url)
-    elif endpoint == "Ollama":
-        client = openai.OpenAI(
-            api_key="ollama", base_url="http://localhost:11434/v1"
-        )
-    else:
-        client = openai.OpenAI(
-            api_key=api_key if api_key else os.getenv("OPENAI_API_KEY")
-        )
+    match endpoint:
+        case "OpenAI":
+            client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+        case "Groq":
+            client = openai.OpenAI(
+                api_key=api_key if api_key else os.getenv("GROQ_API_KEY"),
+                base_url="https://api.groq.com/openai/v1",
+            )
+        case "TogetherAI":
+            client = openai.OpenAI(
+                api_key=api_key if api_key else os.getenv("TOGETHER_API_KEY"),
+                base_url="https://api.together.xyz/v1",
+            )
+        case "CUSTOM":
+            client = openai.OpenAI(api_key=api_key, base_url=base_url)
+        case "Ollama":
+            client = openai.OpenAI(
+                api_key="ollama", base_url="http://localhost:11434/v1"
+            )
+        case _:
+            client = openai.OpenAI(
+                api_key=api_key if api_key else os.getenv("OPENAI_API_KEY")
+            )
 
 
 def rate_limit(get_max_per_minute):
