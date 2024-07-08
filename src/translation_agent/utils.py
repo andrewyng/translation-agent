@@ -1,6 +1,5 @@
 import os
-from typing import List
-from typing import Union
+from typing import List, Union
 
 import openai
 import tiktoken
