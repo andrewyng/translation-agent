@@ -1,12 +1,14 @@
-# a monkey patch for completion
 import os
 import time
 from functools import wraps
 from threading import Lock
+from typing import Optional
 from typing import Union
-import translation_agent.utils as Utils
-import openai
+
 import gradio as gr
+import openai
+import translation_agent.utils as utils
+
 
 RPM = 60
 MODEL = ""
@@ -16,15 +18,16 @@ JS_MODE = False
 ENDPOINT = ""
 client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
+
 # Add your LLMs here
 def model_load(
-        endpoint: str,
-        base_url: str,
-        model: str,
-        api_key: str = None,
-        temperature: float = TEMPERATURE,
-        rpm: int = RPM,
-        js_mode: bool = JS_MODE,
+    endpoint: str,
+    base_url: str,
+    model: str,
+    api_key: Optional[str] = None,
+    temperature: float = TEMPERATURE,
+    rpm: int = RPM,
+    js_mode: bool = JS_MODE,
 ):
     global client, RPM, MODEL, TEMPERATURE, JS_MODE, ENDPOINT
     ENDPOINT = endpoint
@@ -34,15 +37,26 @@ def model_load(
     JS_MODE = js_mode
 
     if endpoint == "Groq":
-        client = openai.OpenAI(api_key=api_key if api_key else os.getenv("GROQ_API_KEY"), base_url="https://api.groq.com/openai/v1")
+        client = openai.OpenAI(
+            api_key=api_key if api_key else os.getenv("GROQ_API_KEY"),
+            base_url="https://api.groq.com/openai/v1",
+        )
     elif endpoint == "TogetherAI":
-        client = openai.OpenAI(api_key=api_key if api_key else os.getenv("TOGETHER_API_KEY"), base_url="https://api.together.xyz/v1")
+        client = openai.OpenAI(
+            api_key=api_key if api_key else os.getenv("TOGETHER_API_KEY"),
+            base_url="https://api.together.xyz/v1",
+        )
     elif endpoint == "CUSTOM":
         client = openai.OpenAI(api_key=api_key, base_url=base_url)
     elif endpoint == "Ollama":
-        client = openai.OpenAI(api_key="ollama", base_url="http://localhost:11434/v1")
+        client = openai.OpenAI(
+            api_key="ollama", base_url="http://localhost:11434/v1"
+        )
     else:
-        client = openai.OpenAI(api_key=api_key if api_key else os.getenv("OPENAI_API_KEY"))
+        client = openai.OpenAI(
+            api_key=api_key if api_key else os.getenv("OPENAI_API_KEY")
+        )
+
 
 def rate_limit(get_max_per_minute):
     def decorator(func):
@@ -63,8 +77,11 @@ def rate_limit(get_max_per_minute):
                 ret = func(*args, **kwargs)
                 last_called[0] = time.time()
                 return ret
+
         return wrapper
+
     return decorator
+
 
 @rate_limit(lambda: RPM)
 def get_completion(
@@ -112,7 +129,7 @@ def get_completion(
             )
             return response.choices[0].message.content
         except Exception as e:
-            raise gr.Error(f"An unexpected error occurred: {e}")
+            raise gr.Error(f"An unexpected error occurred: {e}") from e
     else:
         try:
             response = client.chat.completions.create(
@@ -126,17 +143,18 @@ def get_completion(
             )
             return response.choices[0].message.content
         except Exception as e:
-            raise gr.Error(f"An unexpected error occurred: {e}")
+            raise gr.Error(f"An unexpected error occurred: {e}") from e
 
-Utils.get_completion = get_completion
 
-one_chunk_initial_translation = Utils.one_chunk_initial_translation
-one_chunk_reflect_on_translation = Utils.one_chunk_reflect_on_translation
-one_chunk_improve_translation = Utils.one_chunk_improve_translation
-one_chunk_translate_text = Utils.one_chunk_translate_text
-num_tokens_in_string = Utils.num_tokens_in_string
-multichunk_initial_translation = Utils.multichunk_initial_translation
-multichunk_reflect_on_translation = Utils.multichunk_reflect_on_translation
-multichunk_improve_translation = Utils.multichunk_improve_translation
-multichunk_translation = Utils.multichunk_translation
-calculate_chunk_size =Utils.calculate_chunk_size
+utils.get_completion = get_completion
+
+one_chunk_initial_translation = utils.one_chunk_initial_translation
+one_chunk_reflect_on_translation = utils.one_chunk_reflect_on_translation
+one_chunk_improve_translation = utils.one_chunk_improve_translation
+one_chunk_translate_text = utils.one_chunk_translate_text
+num_tokens_in_string = utils.num_tokens_in_string
+multichunk_initial_translation = utils.multichunk_initial_translation
+multichunk_reflect_on_translation = utils.multichunk_reflect_on_translation
+multichunk_improve_translation = utils.multichunk_improve_translation
+multichunk_translation = utils.multichunk_translation
+calculate_chunk_size = utils.calculate_chunk_size

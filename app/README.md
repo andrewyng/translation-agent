@@ -38,7 +38,7 @@ This repository contains a Gradio web UI for a translation agent that utilizes v
         poetry install --with app
         poetry shell
     ```
-    
+
 2. **Set API Keys:**
    - Rename `.env.sample` to `.env`, you can add your API keys for each service:
 
@@ -53,11 +53,11 @@ This repository contains a Gradio web UI for a translation agent that utilizes v
 
     **Linux**
     ```bash
-    python app/webui/app.py
+    python app/app.py
     ```
     **Windows**
     ```bash
-    python .\app\webui\app.py
+    python .\app\app.py
     ```
 
 4. **Access the Web UI:**
