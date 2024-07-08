@@ -136,7 +136,7 @@ The source text and initial translation, delimited by XML tags <SOURCE_TEXT></SO
 When writing suggestions, pay attention to whether there are ways to improve the translation's \n\
 (i) accuracy (by correcting errors of addition, mistranslation, omission, or untranslated text),\n\
 (ii) fluency (by applying {target_lang} grammar, spelling and punctuation rules, and ensuring there are no unnecessary repetitions),\n\
-(iii) style (by ensuring the translations reflect the style of the source text and takes into account any cultural context),\n\
+(iii) style (by ensuring the translations reflect the style of the source text and take into account any cultural context),\n\
 (iv) terminology (by ensuring terminology use is consistent and reflects the source text domain; and by only ensuring you use equivalent idioms {target_lang}).\n\
 
 Write a list of specific, helpful and constructive suggestions for improving the translation.
