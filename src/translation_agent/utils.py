@@ -21,7 +21,7 @@ MAX_TOKENS_PER_CHUNK = (
 def get_completion(
     prompt: str,
     system_message: str = "You are a helpful assistant.",
-    model: str = "gpt-4-turbo",
+    model_name: str = "gpt-4-turbo",
     temperature: float = 0.3,
     json_mode: bool = False,
 ) -> Union[str, dict]:
@@ -32,7 +32,7 @@ def get_completion(
         prompt (str): The user's prompt or query.
         system_message (str, optional): The system message to set the context for the assistant.
             Defaults to "You are a helpful assistant.".
-        model (str, optional): The name of the OpenAI model to use for generating the completion.
+        model_name (str, optional): The name of the OpenAI model to use for generating the completion.
             Defaults to "gpt-4-turbo".
         temperature (float, optional): The sampling temperature for controlling the randomness of the generated text.
             Defaults to 0.3.
@@ -47,7 +47,7 @@ def get_completion(
 
     if json_mode:
         response = client.chat.completions.create(
-            model=model,
+            model=model_name,
             temperature=temperature,
             top_p=1,
             response_format={"type": "json_object"},
@@ -59,7 +59,7 @@ def get_completion(
         return response.choices[0].message.content
     else:
         response = client.chat.completions.create(
-            model=model,
+            model=model_name,
             temperature=temperature,
             top_p=1,
             messages=[
@@ -71,12 +71,14 @@ def get_completion(
 
 
 def one_chunk_initial_translation(
-    source_lang: str, target_lang: str, source_text: str
+    source_lang: str, target_lang: str, source_text: str, model_name: str = "gpt-4-turbo"
 ) -> str:
     """
     Translate the entire text as one chunk using an LLM.
 
     Args:
+        model_name (str):  The name of the OpenAI model to use for generating the completion.
+            Defaults to "gpt-4-turbo".
         source_lang (str): The source language of the text.
         target_lang (str): The target language for translation.
         source_text (str): The text to be translated.
@@ -95,7 +97,7 @@ Do not provide any explanations or text apart from the translation.
 
     prompt = translation_prompt.format(source_text=source_text)
 
-    translation = get_completion(prompt, system_message=system_message)
+    translation = get_completion(prompt, system_message=system_message, model_name=model_name)
 
     return translation
 
@@ -238,7 +240,7 @@ Output only the new translation and nothing else."""
 
 
 def one_chunk_translate_text(
-    source_lang: str, target_lang: str, source_text: str, country: str = ""
+    source_lang: str, target_lang: str, source_text: str, country: str = "", model_name: str = ""
 ) -> str:
     """
     Translate a single chunk of text from the source language to the target language.
@@ -248,6 +250,8 @@ def one_chunk_translate_text(
     2. Reflect on the initial translation and generate an improved translation.
 
     Args:
+        model_name (str): The name of the OpenAI model to use for generating the completion.
+            Defaults to "gpt-4-turbo".
         source_lang (str): The source language of the text.
         target_lang (str): The target language for the translation.
         source_text (str): The text to be translated.
@@ -256,7 +260,7 @@ def one_chunk_translate_text(
         str: The improved translation of the source text.
     """
     translation_1 = one_chunk_initial_translation(
-        source_lang, target_lang, source_text
+        source_lang, target_lang, source_text, model_name
     )
 
     reflection = one_chunk_reflect_on_translation(
@@ -647,6 +651,7 @@ def translate(
     source_text,
     country,
     max_tokens=MAX_TOKENS_PER_CHUNK,
+    model_name="gpt-4",
 ):
     """Translate the source_text from source_lang to target_lang."""
 
@@ -658,7 +663,7 @@ def translate(
         ic("Translating text as a single chunk")
 
         final_translation = one_chunk_translate_text(
-            source_lang, target_lang, source_text, country
+            source_lang, target_lang, source_text, country, model_name
         )
 
         return final_translation
@@ -673,7 +678,7 @@ def translate(
         ic(token_size)
 
         text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
-            model_name="gpt-4",
+            model_name=model_name,
             chunk_size=token_size,
             chunk_overlap=0,
         )
