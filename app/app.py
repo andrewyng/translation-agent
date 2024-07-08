@@ -122,13 +122,15 @@ def update_menu(visible):
 
 
 def export_txt(strings):
-    os.makedirs("outputs", exist_ok=True)
-    base_count = len(glob(os.path.join("outputs", "*.txt")))
-    file_path = os.path.join("outputs", f"{base_count:06d}.txt")
-    with open(file_path, "w", encoding="utf-8") as f:
-        f.write(strings)
-    return gr.update(value=file_path, visible=True)
-
+    if strings:
+        os.makedirs("outputs", exist_ok=True)
+        base_count = len(glob(os.path.join("outputs", "*.txt")))
+        file_path = os.path.join("outputs", f"{base_count:06d}.txt")
+        with open(file_path, "w", encoding="utf-8") as f:
+            f.write(strings)
+        return gr.update(value=file_path, visible=True)
+    else:
+        return gr.update(visible=False)
 
 def switch(source_lang, source_text, target_lang, output_final):
     if output_final:
@@ -151,9 +153,11 @@ def close_btn_show():
     return gr.update(visible=False), gr.update(visible=True)
 
 
-def close_btn_hide(output_final):
-    if output_final:
+def close_btn_hide(output_diff):
+    if output_diff:
         return gr.update(visible=True), gr.update(visible=False)
+    else:
+        return gr.update(visible=False), gr.update(visible=True)
 
 
 TITLE = """
@@ -377,11 +381,11 @@ with gr.Blocks(theme="soft", css=CSS, fill_height=True) as demo:
         outputs=[output_init, output_reflect, output_final, output_diff],
     )
     upload.upload(fn=read_doc, inputs=upload, outputs=source_text)
-    output_final.change(fn=export_txt, inputs=output_final, outputs=[export])
+    output_diff.change(fn=export_txt, inputs=output_final, outputs=[export])
 
     submit.click(fn=close_btn_show, outputs=[clear, close])
-    output_final.change(
-        fn=close_btn_hide, inputs=output_final, outputs=[clear, close]
+    output_diff.change(
+        fn=close_btn_hide, inputs=output_diff, outputs=[clear, close]
     )
     close.click(fn=None, cancels=start_ta)
 
