@@ -1,0 +1,23 @@
+[Source Language]: English
+[Target Language]: Chinese
+[Country](Optional): 
+[Source Text]:
+This is not mature software, and is the result of Andrew playing around with translations on weekends the past few months, plus collaborators (Joaquin Dominguez, Nedelina Teneva, John Santerre) helping refactor the code.
+
+According to our evaluations using BLEU score on traditional translation datasets, this workflow is sometimes competitive with, but also sometimes worse than, leading commercial offerings. However, we’ve also occasionally gotten fantastic results (superior to commercial offerings) with this approach. We think this is just a starting point for agentic translations, and that this is a promising direction for translation, with significant headroom for further improvement, which is why we’re releasing this demonstration to encourage more discussion, experimentation, research and open-source contributions.
+
+
+
+[Initial Translation]:
+这不是成熟的软件，而是安德鲁在过去几个月的周末里玩转翻译的成果，加上合作者（华金·多明格斯、内德莉娜·特内娃、约翰·桑特雷）帮助重构代码。根据我们使用传统翻译数据集上的BLEU分数进行的评估，这种工作流程有时能与领先的商业产品竞争，但有时也表现得更差。然而，我们也偶尔获得了出色的结果（优于商业产品）。我们认为这只是自主翻译的起点，这是一个有前景的翻译方向，有巨大的改进空间，这也是我们发布这个演示以鼓励更多讨论、实验、研究和开源贡献的原因。
+[Reflection]:
+1. 将“这不是成熟的软件，而是安德鲁在过去几个月的周末里玩转翻译的成果”中的“玩转翻译”改为“尝试翻译”，以更准确地表达原文的含义，即安德鲁是在尝试而非游戏般地进行翻译。
+2. 在“加上合作者（华金·多明格斯、内德莉娜·特内娃、约翰·桑特雷）帮助重构代码”中，建议将“帮助重构代码”改为“协助重构代码”，使表达更加流畅和正式。
+3. “根据我们使用传统翻译数据集上的BLEU分数进行的评估”中，“传统翻译数据集”可能需要进一步明确其含义，以避免歧义。
+4. “这种工作流程有时能与领先的商业产品竞争，但有时也表现得更差”中，建议将“表现得更差”改为“表现不如人意”，以避免直接贬低自己的工作，同时保持中性的表达。
+5. “然而，我们也偶尔获得了出色的结果（优于商业产品）”中，建议将“偶尔获得了出色的结果”改为“偶尔也取得了优于商业产品的出色结果”，以增强句子的连贯性和强调效果。
+6. “我们认为这只是自主翻译的起点，这是一个有前景的翻译方向，有巨大的改进空间”中，建议将“起点”改为“初步尝试”，以更准确地描述当前阶段的工作性质。
+7. 在“这也是我们发布这个演示以鼓励更多讨论、实验、研究和开源贡献的原因”中，建议将“发布这个演示”改为“发布此演示版本”，使表达更加清晰和专业。
+[Final Translation]:
+这不是成熟的软件，而是安德鲁在过去几个月的周末里尝试翻译的成果，加上合作者（华金·多明格斯、内德莉娜·特内娃、约翰·桑特雷）协助重构代码。根据我们使用传统翻译数据集上的BLEU分数进行的评估，这种工作流程有时能与领先的商业产品竞争，但有时也表现不如人意。然而，我们也偶尔也取得了优于商业产品的出色结果。我们认为这只是自主翻译的初步尝试，这是一个有前景的翻译方向，有巨大的改进空间，这也是我们发布此演示版本以鼓励更多讨论、实验、研究和开源贡献的原因。
+***Repl Closed***
