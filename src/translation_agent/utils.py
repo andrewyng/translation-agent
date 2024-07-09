@@ -7,6 +7,9 @@ from dotenv import load_dotenv
 from icecream import ic
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
+import boto3
+import botocore
+import logging
 
 load_dotenv()  # read local .env file
 client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
@@ -43,6 +46,8 @@ def get_completion(
             If json_mode is True, returns the complete API response as a dictionary.
             If json_mode is False, returns the generated text as a string.
     """
+    if os.getenv("BEDROCK")=="True":
+        return get_completion_bedrock(prompt=prompt,system_message=system_message,model="anthropic.claude-3-5-sonnet-20240620-v1:0",temperature=0.3,json_mode=False)
 
     if json_mode:
         response = client.chat.completions.create(
@@ -68,6 +73,77 @@ def get_completion(
         )
         return response.choices[0].message.content
 
+def get_completion_bedrock(
+    prompt: str,
+    system_message: str = "You are a helpful assistant.",
+    model: str = "anthropic.claude-3-5-sonnet-20240620-v1:0",
+    temperature: float = 0.3,
+    json_mode: bool = False,
+) -> Union[str, dict]:
+    """
+        Generate a completion using the OpenAI API.
+
+    Args:
+        prompt (str): The user's prompt or query.
+        system_message (str, optional): The system message to set the context for the assistant.
+            Defaults to "You are a helpful assistant.".
+        model (str, optional): The name of the OpenAI model to use for generating the completion.
+            Defaults to "gpt-4-turbo".
+        temperature (float, optional): The sampling temperature for controlling the randomness of the generated text.
+            Defaults to 0.3.
+        json_mode (bool, optional): Whether to return the response in JSON format.
+            Defaults to False.
+
+    Returns:
+        Union[str, dict]: The generated completion.
+            If json_mode is True, returns the complete API response as a dictionary.
+            If json_mode is False, returns the generated text as a string.
+    """
+    messages = [
+        {
+            "role": "user",
+            "content": [{
+                "text": prompt
+            }]
+        }
+    ]
+    
+    bedrock_client = boto3.client(service_name='bedrock-runtime', 
+        region_name='us-east-1',
+        aws_access_key_id=os.getenv("ACCESS_KEY"),
+        aws_secret_access_key=os.getenv("SECRET_KEY"))
+
+    system_prompts = [{"text" : system_message}]
+
+    # Inference parameters to use.
+    top_k = 200
+
+    #Base inference parameters to use.
+    inference_config = {"temperature": temperature}
+    # Additional inference parameters to use.
+    additional_model_fields = {"top_k": top_k}
+    try:
+        # Send the message.
+        response = bedrock_client.converse(
+            modelId=model,
+            messages=messages,
+            system=system_prompts,
+            inferenceConfig=inference_config,
+            additionalModelRequestFields=additional_model_fields,
+        )
+
+        #print(response['output'])
+        #print(response['usage'])
+    except ClientError as err:
+        message = err.response['Error']['Message']
+        logger.error("A client error occurred: %s", message)
+        #print(f"A client error occured: {message}")
+
+    else:
+        pass
+        #print(f"Finished generating text with model {model}.")
+    print(response['output']['message']['content'][0]['text'])
+    return response['output']['message']['content'][0]['text']
 
 def one_chunk_initial_translation(
     source_lang: str, target_lang: str, source_text: str
