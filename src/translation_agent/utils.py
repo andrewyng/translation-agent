@@ -92,9 +92,7 @@ Do not provide any explanations or text apart from the translation.
 
 {target_lang}:"""
 
-    prompt = translation_prompt.format(source_text=source_text)
-
-    translation = get_completion(prompt, system_message=system_message)
+    translation = get_completion(translation_prompt, system_message=system_message)
 
     return translation
 
@@ -170,13 +168,7 @@ Write a list of specific, helpful and constructive suggestions for improving the
 Each suggestion should address one specific part of the translation.
 Output only the suggestions and nothing else."""
 
-    prompt = reflection_prompt.format(
-        source_lang=source_lang,
-        target_lang=target_lang,
-        source_text=source_text,
-        translation_1=translation_1,
-    )
-    reflection = get_completion(prompt, system_message=system_message)
+    reflection = get_completion(reflection_prompt, system_message=system_message)
     return reflection
 
 
