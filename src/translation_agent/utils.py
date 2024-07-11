@@ -273,12 +273,6 @@ def num_tokens_in_string(
 
     Returns:
         int: The number of tokens in the input string.
-
-    Example:
-        >>> text = "Hello, how are you?"
-        >>> num_tokens = num_tokens_in_string(text)
-        >>> print(num_tokens)
-        5
     """
     encoding = tiktoken.get_encoding(encoding_name)
     num_tokens = len(encoding.encode(input_str))
