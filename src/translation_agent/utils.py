@@ -323,13 +323,38 @@ Output only the translation of the portion you are asked to translate, and nothi
     translation_chunks = []
     for i in range(len(source_text_chunks)):
         # Will translate chunk i
-        tagged_text = (
-            "".join(source_text_chunks[0:i])
-            + "<TRANSLATE_THIS>"
-            + source_text_chunks[i]
-            + "</TRANSLATE_THIS>"
-            + "".join(source_text_chunks[i + 1 :])
-        )
+        if i == 0:
+            # First chunk
+            tagged_text = (
+                "<TRANSLATE_THIS>"
+                + source_text_chunks[i]
+                + "</TRANSLATE_THIS>"
+                + "".join(source_text_chunks[i + 1 :])
+            )
+        elif i == len(source_text_chunks) - 1:
+            # Last chunk
+            tagged_text = (
+                 "".join(source_text_chunks[0:i])
+                + "<TRANSLATE_THIS>"
+                + source_text_chunks[i]
+                + "</TRANSLATE_THIS>"
+            )
+        else:
+            # Middle chunk
+            tagged_text = (
+                 "".join(source_text_chunks[0:i])
+                + "<TRANSLATE_THIS>"
+                + source_text_chunks[i]
+                + "</TRANSLATE_THIS>"
+                + "".join(source_text_chunks[i + 1 :])
+            )
+        # tagged_text = (
+        #     "".join(source_text_chunks[0:i])
+        #     + "<TRANSLATE_THIS>"
+        #     + source_text_chunks[i]
+        #     + "</TRANSLATE_THIS>"
+        #     + "".join(source_text_chunks[i + 1 :])
+        # )
 
         prompt = translation_prompt.format(
             source_lang=source_lang,
