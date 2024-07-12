@@ -1,3 +1,4 @@
+import re
 from difflib import Differ
 
 import docx
@@ -86,6 +87,52 @@ def diff_texts(text1, text2):
     return highlighted_text
 
 
+def tokenize_mixed_direction_text(text: str, language: str) -> str:
+    """
+    Tokenizes a given text while correctly handling the embedding of LTR text within an RTL context,
+    preserving formatting such as spaces and new lines. LTR words are isolated using Unicode
+    Bidirectional Algorithm control characters to ensure proper display within RTL text.
+
+    Args:
+        text (str): The text to be tokenized and formatted.
+        language (str): The language of the text, which determines text directionality.
+
+    Returns:
+        str: The tokenized text with LTR words appropriately wrapped to preserve reading flow in RTL languages.
+    """
+    rtl_languages = {
+        "Arabic",
+        "Aramaic",
+        "Azeri",
+        "Dhivehi/Maldivian",
+        "Hebrew",
+        "Kurdish (Sorani)",
+        "Persian/Farsi",
+        "Urdu",
+    }
+    is_rtl = language in rtl_languages
+
+    # Regex to capture words, non-word characters, and any whitespace
+    words_and_delimiters = re.findall(r"\w+|[^\w\s]+|\s+", text)
+
+    new_text = []
+    ltr_pattern = re.compile(
+        "[A-Za-z]+"
+    )  # This pattern identifies Latin script
+
+    if is_rtl:
+        for segment in words_and_delimiters:
+            # Check if the segment contains Latin script and not just whitespace
+            if ltr_pattern.search(segment) and not segment.isspace():
+                # Wrap LTR segments with Right-to-Left Embedding (RLE) and Pop Directional Format (PDF)
+                segment = "\u202b" + segment + "\u202c"
+            new_text.append(segment)
+    else:
+        new_text = words_and_delimiters  # Non-RTL texts are returned unchanged
+
+    return "".join(new_text)
+
+
 # modified from src.translaation-agent.utils.tranlsate
 def translator(
     source_lang: str,
@@ -116,6 +163,13 @@ def translator(
         final_translation = one_chunk_improve_translation(
             source_lang, target_lang, source_text, init_translation, reflection
         )
+        init_translation = tokenize_mixed_direction_text(
+            init_translation, target_lang
+        )
+        reflection = tokenize_mixed_direction_text(reflection, target_lang)
+        final_translation = tokenize_mixed_direction_text(
+            final_translation, target_lang
+        )
 
         return init_translation, reflection, final_translation
 
@@ -142,6 +196,9 @@ def translator(
         )
 
         init_translation = "".join(translation_1_chunks)
+        init_translation = tokenize_mixed_direction_text(
+            init_translation, target_lang
+        )
 
         progress((2, 3), desc="Reflection...")
         reflection_chunks = multichunk_reflect_on_translation(
@@ -153,6 +210,7 @@ def translator(
         )
 
         reflection = "".join(reflection_chunks)
+        reflection = tokenize_mixed_direction_text(reflection, target_lang)
 
         progress((3, 3), desc="Second translation...")
         translation_2_chunks = multichunk_improve_translation(
@@ -164,6 +222,9 @@ def translator(
         )
 
         final_translation = "".join(translation_2_chunks)
+        final_translation = tokenize_mixed_direction_text(
+            final_translation, target_lang
+        )
 
         return init_translation, reflection, final_translation
 
@@ -206,6 +267,13 @@ def translator_sec(
         final_translation = one_chunk_improve_translation(
             source_lang, target_lang, source_text, init_translation, reflection
         )
+        init_translation = tokenize_mixed_direction_text(
+            init_translation, target_lang
+        )
+        reflection = tokenize_mixed_direction_text(reflection, target_lang)
+        final_translation = tokenize_mixed_direction_text(
+            final_translation, target_lang
+        )
 
         return init_translation, reflection, final_translation
 
@@ -232,6 +300,9 @@ def translator_sec(
         )
 
         init_translation = "".join(translation_1_chunks)
+        init_translation = tokenize_mixed_direction_text(
+            init_translation, target_lang
+        )
 
         try:
             model_load(endpoint2, base2, model2, api_key2)
@@ -248,6 +319,7 @@ def translator_sec(
         )
 
         reflection = "".join(reflection_chunks)
+        reflection = tokenize_mixed_direction_text(reflection, target_lang)
 
         progress((3, 3), desc="Second translation...")
         translation_2_chunks = multichunk_improve_translation(
@@ -259,5 +331,8 @@ def translator_sec(
         )
 
         final_translation = "".join(translation_2_chunks)
+        final_translation = tokenize_mixed_direction_text(
+            final_translation, target_lang
+        )
 
         return init_translation, reflection, final_translation
