@@ -4,7 +4,7 @@ import translation_agent as ta
 
 
 if __name__ == "__main__":
-    source_lang, target_lang, country = "English", "Spanish", "Mexico"
+    source_lang, target_lang, country, max_iterations, min_score_threshold = "English", "Spanish", "Mexico", 2, 90
 
     relative_path = "sample-texts/sample-short1.txt"
     script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -21,6 +21,10 @@ if __name__ == "__main__":
         target_lang=target_lang,
         source_text=source_text,
         country=country,
+        max_iterations=max_iterations,
+        min_score_threshold=min_score_threshold
+        
+
     )
 
     print(f"Translation:\n\n{translation}")
