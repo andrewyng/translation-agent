@@ -34,7 +34,7 @@ def extract_suggestions_and_score(text):
 
     if score_match and suggestions_match:
         score_str = score_match.group(1).strip()
-        score = int(score_str) if score_str.isdigit() else 0  # 转换为数字，如果失败则默认为0.0
+        score = int(score_str) if score_str.isdigit() else 0
         reflection = suggestions_match.group(1).strip()
         return reflection, score
     else:
