@@ -48,6 +48,9 @@ translation = ta.translate(source_lang, target_lang, source_text, country)
 ```
 See examples/example_script.py for an example script to try out.
 
+### WebUI App:
+See the [guide](app/README.md) on running webui App for more information.
+
 ## License
 
 Translation Agent is released under the **MIT License**. You are free to use, modify, and distribute the code

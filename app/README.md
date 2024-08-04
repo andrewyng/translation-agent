@@ -1,7 +1,7 @@
 
 ## Translation Agent WebUI
 
-This repository contains a Gradio web UI for a translation agent that utilizes various language models for translation.
+A Translation-Agent webUI based on Gradio library 🤗
 
 ### Preview
 
@@ -11,14 +11,8 @@ This repository contains a Gradio web UI for a translation agent that utilizes v
 
 - **Tokenized Text:**  Displays translated text with tokenization, highlighting differences between original and translated words.
 - **Document Upload:** Supports uploading various document formats (PDF, TXT, DOC, etc.) for translation.
-- **Multiple API Support:**  Integrates with popular language models like:
-    - Groq
-    - OpenAI
-    - Ollama
-    - Together AI
-    ...
+- **OpenAI compatible APIs Supports:** Supports for customizing any OpenAI compatible APIs.
 - **Different LLM for reflection**: Now you can enable second Endpoint to use another LLM for reflection.
-
 
 **Getting Started**
 
@@ -72,17 +66,13 @@ This repository contains a Gradio web UI for a translation agent that utilizes v
 5. Enable Second Endpoint, you can add another endpoint by different LLMs for reflection.
 6. Using a custom endpoint, you can enter an OpenAI compatible API base url.
 
-**Customization:**
+**Advanced Options:**
 
-- **Add New LLMs:**  Modify the `patch.py` file to integrate additional LLMs.
+- **Nax tokens Per chunk:** Break down text into smaller chunks. LLMs have a limited context window, appropriate setting based on model information will ensure that the model has enough context to understand each individual chunk and generate accurate reponses. Defaults to 1000.
 
-**Contributing:**
+- **Temprature:** The sampling temperature for controlling the randomness of the generated text. Defaults to 0.3.
 
-Contributions are welcome! Feel free to open issues or submit pull requests.
-
-**License:**
-
-This project is licensed under the MIT License.
+- **Request Per Minute:** This parameter affects the request speed. Rate limits are a common practice for APIs, such as RPM(Request Per Minute), TPM(Tokens Per Minute), please refer to the information of the API service provider and set the parameter value reasonably. Defaults to 60.
 
 **DEMO:**
 
