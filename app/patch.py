@@ -48,7 +48,8 @@ def model_load(
                 base_url="https://api.together.xyz/v1",
             )
         case "CUSTOM":
-            client = openai.OpenAI(api_key=api_key, base_url=base_url)
+            client = openai.OpenAI(api_key=api_key if api_key else os.getenv(
+                "OPENAI_API_KEY"), base_url=base_url if base_url else os.getenv("OPENAI_API_BASE"))
         case "Ollama":
             client = openai.OpenAI(
                 api_key="ollama", base_url="http://localhost:11434/v1"
