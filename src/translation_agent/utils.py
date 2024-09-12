@@ -1,15 +1,24 @@
 import os
 from typing import List, Union
 
-import openai
 import tiktoken
 from dotenv import load_dotenv
 from icecream import ic
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from openai import AzureOpenAI
 
 
 load_dotenv()  # read local .env file
-client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+
+# use Azure OpenAI API
+model = os.getenv("COMPLETIONS_MODEL")
+client = AzureOpenAI(
+    api_key=os.getenv("AZURE_OPENAI_API_KEY"),
+    azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
+    api_version=os.getenv("OPENAI_API_VERSION"),
+)
+
 
 MAX_TOKENS_PER_CHUNK = (
     1000  # if text is more than this many tokens, we'll break it up into
@@ -20,7 +29,8 @@ MAX_TOKENS_PER_CHUNK = (
 def get_completion(
     prompt: str,
     system_message: str = "You are a helpful assistant.",
-    model: str = "gpt-4-turbo",
+    # fix to COMPLETIONS_MODEL
+    model: str = model,
     temperature: float = 0.3,
     json_mode: bool = False,
 ) -> Union[str, dict]:
@@ -92,7 +102,9 @@ Do not provide any explanations or text apart from the translation.
 
 {target_lang}:"""
 
-    translation = get_completion(translation_prompt, system_message=system_message)
+    translation = get_completion(
+        translation_prompt, system_message=system_message
+    )
 
     return translation
 
@@ -168,7 +180,9 @@ Write a list of specific, helpful and constructive suggestions for improving the
 Each suggestion should address one specific part of the translation.
 Output only the suggestions and nothing else."""
 
-    reflection = get_completion(reflection_prompt, system_message=system_message)
+    reflection = get_completion(
+        reflection_prompt, system_message=system_message
+    )
     return reflection
 
 

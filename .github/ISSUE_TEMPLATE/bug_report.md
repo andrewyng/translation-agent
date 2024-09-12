@@ -2,16 +2,15 @@
 name: Bug report
 about: Create a bug report
 title: ''
-labels: bug 
+labels: bug
 assignees: ''
 
 ---
 
-* Clearly describe the bug: 
+* Clearly describe the bug:
 
-* Instructions for reproducing the bug: 
+* Instructions for reproducing the bug:
 
-* Expected behavior: 
+* Expected behavior:
 
-* Proposed solution: 
-
+* Proposed solution:
