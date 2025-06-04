@@ -1,7 +1,7 @@
 import os
 from typing import List
 from typing import Union
-
+import re
 import openai
 import tiktoken
 from dotenv import load_dotenv
@@ -757,6 +757,9 @@ def translate(
     total_max_tokens=TOTAL_MAX_TOKENS,
 ):
     """Translate the source_text from source_lang to target_lang."""
+    # remove (top_up) in source_ text
+    p = re.compile("(\(top[ -]up\))", flags=re.IGNORECASE)
+    source_text = p.sub("", source_text)
     if chunk_model == DEFAULT_CHUNK_MODEL:
         tokenizer = DEFAULT_TOKENIZER
     elif chunk_model in tiktoken.model.MODEL_TO_ENCODING:
